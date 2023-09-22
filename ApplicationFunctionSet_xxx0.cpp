@@ -12,16 +12,12 @@
 #include "ApplicationFunctionSet_xxx0.h"
 #include "DeviceDriverSet_xxx0.h"
 
-#include "ArduinoJson-v6.11.1.h" //ArduinoJson
-#include "MPU6050_getdata.h"
-
 #define _is_print 1
 #define _Test_print 0
 
 ApplicationFunctionSet Application_FunctionSet;
 
 /*硬件设备成员对象序列*/
-MPU6050_getdata AppMPU6050getdata;
 DeviceDriverSet_Motor AppMotor;
 DeviceDriverSet_ULTRASONIC AppULTRASONIC;
 DeviceDriverSet_Servo AppServo;
@@ -76,12 +72,9 @@ void ApplicationFunctionSet_SmartRobotCarMotionControl(SmartRobotCarMotionContro
 
 void ApplicationFunctionSet::ApplicationFunctionSet_Init(void)
 {
-  bool res_error = true;
   Serial.begin(9600);
   AppMotor.DeviceDriverSet_Motor_Init();
   AppULTRASONIC.DeviceDriverSet_ULTRASONIC_Init();
-  res_error = AppMPU6050getdata.MPU6050_dveInit();
-  AppMPU6050getdata.MPU6050_calibration();
 
   while (Serial.read() >= 0)
   {
@@ -110,7 +103,6 @@ static void ApplicationFunctionSet_SmartRobotCarLinearMotionControl(SmartRobotCa
   {
     AppMotor.DeviceDriverSet_Motor_control(/*direction_A*/ direction_void, /*speed_A*/ 0,
                                            /*direction_B*/ direction_void, /*speed_B*/ 0, /*controlED*/ control_enable); //Motor control
-    AppMPU6050getdata.MPU6050_dveGetEulerAngles(&Yaw);
     is_time = millis();
   }
   //if (en != directionRecord)
@@ -270,6 +262,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
 
   if (Application_SmartRobotCarxxx0.Functional_Mode == ObstacleAvoidance_mode) {
     uint16_t get_Distance;
+    uint16_t get_Distance_2;
     
     if (Car_LeaveTheGround == false) {
       Serial.println("Not on Ground");
@@ -278,16 +271,31 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
       return;
     }
 
-    AppULTRASONIC.DeviceDriverSet_ULTRASONIC_Get(&get_Distance /*out*/);
-    Serial.print("ULTRASONIC=");
+    AppULTRASONIC.DeviceDriverSet_ULTRASONIC_Get(&get_Distance, &get_Distance_2);
+    Serial.print("ULTRASONIC LEFT=");
     Serial.println(get_Distance);
+    Serial.print("ULTRASONIC RIGHT=");
+    Serial.println(get_Distance_2);
     
 
-    if (function_xxx(get_Distance, 0, 10)) {
+    if (function_xxx(get_Distance, 0, 10) && function_xxx(get_Distance_2, 0, 10)) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
+      Serial.print("Both detecting the table");
       delay_xxx(50);
-    } else {
+    }
+    else if (function_xxx(get_Distance, 0, 10)) {
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
+      Serial.print("Left detecting the table");
+      delay_xxx(50);
+    }
+    else if (function_xxx(get_Distance_2, 0, 10)) {
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
+      Serial.print("Right detecting the table");
+      delay_xxx(50);
+    }
+    else {
       ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
+      Serial.print("Both NOT detecting the table");
       delay_xxx(50);
     }
 

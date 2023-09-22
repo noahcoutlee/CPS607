@@ -142,18 +142,26 @@ void DeviceDriverSet_Motor::DeviceDriverSet_Motor_control(boolean direction_A, u
 // NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
 void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Init(void)
 {
-  pinMode(ECHO_PIN, INPUT); //Ultrasonic module initialization
-  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN_LEFT, INPUT); //Ultrasonic module initialization
+  pinMode(ECHO_PIN_RIGHT, INPUT); //Ultrasonic module initialization
+  pinMode(TRIG_PIN_LEFT, OUTPUT);
+  pinMode(TRIG_PIN_RIGHT, OUTPUT);
 }
-void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Get(uint16_t *ULTRASONIC_Get /*out*/)
+void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Get(uint16_t *ULTRASONIC_Get, uint16_t *ULTRASONIC_Get_2)
 {
   unsigned int tempda_x = 0;
-  digitalWrite(TRIG_PIN, LOW);
+  unsigned int tempda_x_2 = 0;
+  digitalWrite(TRIG_PIN_LEFT, LOW);
+  digitalWrite(TRIG_PIN_RIGHT, LOW);
   delayMicroseconds(2);
-  digitalWrite(TRIG_PIN, HIGH);
+  digitalWrite(TRIG_PIN_LEFT, HIGH);
+  digitalWrite(TRIG_PIN_RIGHT, HIGH);
   delayMicroseconds(10);
-  digitalWrite(TRIG_PIN, LOW);
-  tempda_x = ((unsigned int)pulseIn(ECHO_PIN, HIGH) / 58);
+  digitalWrite(TRIG_PIN_LEFT, LOW);
+  digitalWrite(TRIG_PIN_RIGHT, LOW);
+  tempda_x = ((unsigned int)pulseIn(ECHO_PIN_LEFT, HIGH) / 58);
+  tempda_x_2 = ((unsigned int)pulseIn(ECHO_PIN_RIGHT, HIGH) / 58);
   *ULTRASONIC_Get = tempda_x;
+  *ULTRASONIC_Get_2 = tempda_x_2;
   // sonar.ping() / US_ROUNDTRIP_CM; // Send ping, get ping time in microseconds (uS).
 }
