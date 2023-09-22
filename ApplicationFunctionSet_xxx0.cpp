@@ -8,6 +8,8 @@
  */
 #include <hardwareSerial.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include <string.h>
 #include "ApplicationFunctionSet_xxx0.h"
 #include "DeviceDriverSet_xxx0.h"
@@ -164,11 +166,11 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
     uint16_t get_Distance_R;
 
     AppULTRASONIC_L.DeviceDriverSet_ULTRASONIC_Get_L(&get_Distance_L /*out*/);
-    // Serial.print("ULTRASONIC_L=");
-    // Serial.println(get_Distance_L);
+    Serial.print("ULTRASONIC_L=");
+    Serial.println(get_Distance_L);
     AppULTRASONIC_R.DeviceDriverSet_ULTRASONIC_Get_R(&get_Distance_R /*out*/);
-    // Serial.print("ULTRASONIC_R=");
-    // Serial.println(get_Distance_R);
+    Serial.print("ULTRASONIC_R=");
+    Serial.println(get_Distance_R);
 
 
     if (function_xxx(get_Distance_L, 0, 1) || function_xxx(get_Distance_R, 0, 1)) {
@@ -179,23 +181,37 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
       Serial.println("Forward");
       delay_xxx(50);
-    }
-    else if (function_xxx(get_Distance_L, 1, 10)) {
+    } else if (function_xxx(get_Distance_L, 1, 10)) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 50);
       Serial.println("Left");
-      delay_xxx(50);
-    }
-    else if (function_xxx(get_Distance_R, 1, 10)) {
+      delay_xxx(500);
+    } else if (function_xxx(get_Distance_R, 1, 10)) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 50);
       Serial.println("Right");
-      delay_xxx(50);
+      delay_xxx(500);
     } else {
-      // ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 50);
-      // Serial.println("Backward");
-      // delay_xxx(500);
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 50);
-      Serial.println("Right");
-      delay_xxx(2000);
+      // Seed the random number generator with the current time
+      // srand(time(NULL));
+      // Generate a random integer between 0 and RAND_MAX
+      int randomTime = (rand() % (3000 - 1000 + 1)) + 1000;
+      int randomDirection = (rand() % 2);
+      Serial.println(randomTime);
+      Serial.println(randomDirection);
+
+      if (randomDirection == 0) {
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 50);
+        delay_xxx(1000);
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 50);
+        Serial.println("Back Right");
+        delay_xxx(randomTime);
+      } else {
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 50);
+        delay_xxx(1000);
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 50);
+        Serial.println("Back Left");
+        delay_xxx(randomTime);
+      }
+
     }
 
   } else {
