@@ -14,8 +14,6 @@
 #include "ApplicationFunctionSet_xxx0.h"
 #include "DeviceDriverSet_xxx0.h"
 
-#include "ArduinoJson-v6.11.1.h" //ArduinoJson
-
 #define _is_print 1
 #define _Test_print 0
 
@@ -215,6 +213,6 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
     }
 
   } else {
-    Serial.println("Error: Not in Obstacle Avoiudance Mode?");
+    Serial.println("Error: Not in Obstacle Avoidance Mode?");
   }
 }
