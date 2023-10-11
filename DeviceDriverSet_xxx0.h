@@ -48,18 +48,33 @@ class DeviceDriverSet_ULTRASONIC
 public:
   void DeviceDriverSet_ULTRASONIC_Init_R(void);
   void DeviceDriverSet_ULTRASONIC_Init_L(void);
+  void DeviceDriverSet_ULTRASONIC_Init_OBS_L(void);
+  void DeviceDriverSet_ULTRASONIC_Init_OBS_M(void);
+  void DeviceDriverSet_ULTRASONIC_Init_OBS_R(void);
 #if _Test_DeviceDriverSet
   void DeviceDriverSet_ULTRASONIC_Test_R(void);
   void DeviceDriverSet_ULTRASONIC_Test_L(void);
+  void DeviceDriverSet_ULTRASONIC_Init_OBS_L(void);
+  void DeviceDriverSet_ULTRASONIC_Init_OBS_M(void);
+  void DeviceDriverSet_ULTRASONIC_Init_OBS_R(void);
 #endif
   void DeviceDriverSet_ULTRASONIC_Get_R(uint16_t *ULTRASONIC_Get_R  /*out*/);
   void DeviceDriverSet_ULTRASONIC_Get_L(uint16_t *ULTRASONIC_Get_L  /*out*/);
+  void DeviceDriverSet_ULTRASONIC_Get_OBS_L(uint16_t *ULTRASONIC_Get_OBS_L  /*out*/);
+  void DeviceDriverSet_ULTRASONIC_Get_OBS_M(uint16_t *ULTRASONIC_Get_OBS_M  /*out*/);
+  void DeviceDriverSet_ULTRASONIC_Get_OBS_R(uint16_t *ULTRASONIC_Get_OBS_R  /*out*/);
 
 private:
 #define TRIG_PIN_R 11     // Arduino pin tied to trigger pin on the ultrasonic sensor.
 #define ECHO_PIN_R 10      // Arduino pin tied to echo pin on the ultrasonic sensor.
 #define TRIG_PIN_L 13     // Arduino pin tied to trigger pin on the ultrasonic sensor.
 #define ECHO_PIN_L 12
+#define TRIG_PIN_OBS_L 27
+#define ECHO_PIN_OBS_L 25
+#define TRIG_PIN_OBS_M 26
+#define ECHO_PIN_OBS_M 24
+#define TRIG_PIN_OBS_R 30
+#define ECHO_PIN_OBS_R 31
 #define MAX_DISTANCE 200 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
 };
 

@@ -119,6 +119,31 @@ void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Init_L(void)
   pinMode(ECHO_PIN_L, INPUT); //Ultrasonic module initialization
   pinMode(TRIG_PIN_L, OUTPUT);
 }
+
+void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Init_OBS_L(void)
+{
+  pinMode(ECHO_PIN_OBS_L, INPUT); //Ultrasonic module initialization
+  pinMode(TRIG_PIN_OBS_L, OUTPUT);
+  pinMode(29, OUTPUT);
+  pinMode(23, INPUT);
+}
+
+void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Init_OBS_M(void)
+{
+  pinMode(ECHO_PIN_OBS_M, INPUT); //Ultrasonic module initialization
+  pinMode(TRIG_PIN_OBS_M, OUTPUT);
+  pinMode(28, OUTPUT);
+  pinMode(22, INPUT);
+}
+
+void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Init_OBS_R(void)
+{
+  pinMode(ECHO_PIN_OBS_R, INPUT); //Ultrasonic module initialization
+  pinMode(TRIG_PIN_OBS_R, OUTPUT);
+  // pinMode(28, OUTPUT);
+  // pinMode(22, INPUT);
+}
+
 void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Get_L(uint16_t *ULTRASONIC_Get_L /*out*/)
 {
   unsigned int tempda_x_L = 0;
@@ -142,4 +167,43 @@ void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Get_R(uint16_t *ULTR
   digitalWrite(TRIG_PIN_R, LOW);
   tempda_x_R = ((unsigned int)pulseIn(ECHO_PIN_R, HIGH) / 58);
   *ULTRASONIC_Get_R = tempda_x_R;
+}
+
+void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Get_OBS_L(uint16_t *ULTRASONIC_Get_OBS_L /*out*/)
+{
+  unsigned int tempda_x_L = 0;
+  digitalWrite(29, HIGH);
+  digitalWrite(TRIG_PIN_OBS_L, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN_OBS_L, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN_OBS_L, LOW);
+  tempda_x_L = ((unsigned int)pulseIn(ECHO_PIN_OBS_L, HIGH) / 58);
+  *ULTRASONIC_Get_OBS_L = tempda_x_L;
+}
+
+void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Get_OBS_M(uint16_t *ULTRASONIC_Get_OBS_M /*out*/)
+{
+  unsigned int tempda_x_M = 0;
+  digitalWrite(28, HIGH);
+  digitalWrite(TRIG_PIN_OBS_M, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN_OBS_M, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN_OBS_M, LOW);
+  tempda_x_M = ((unsigned int)pulseIn(ECHO_PIN_OBS_M, HIGH) / 58);
+  *ULTRASONIC_Get_OBS_M = tempda_x_M;
+}
+
+void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Get_OBS_R(uint16_t *ULTRASONIC_Get_OBS_R /*out*/)
+{
+  unsigned int tempda_x_R = 0;
+  // digitalWrite(28, HIGH);
+  digitalWrite(TRIG_PIN_OBS_R, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN_OBS_R, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN_OBS_R, LOW);
+  tempda_x_R = ((unsigned int)pulseIn(ECHO_PIN_OBS_R, HIGH) / 58);
+  *ULTRASONIC_Get_OBS_R = tempda_x_R;
 }

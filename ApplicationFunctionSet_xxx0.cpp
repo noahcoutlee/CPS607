@@ -23,7 +23,9 @@ ApplicationFunctionSet Application_FunctionSet;
 DeviceDriverSet_Motor AppMotor;
 DeviceDriverSet_ULTRASONIC AppULTRASONIC_L;
 DeviceDriverSet_ULTRASONIC AppULTRASONIC_R;
-
+DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_L;
+DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_M;
+DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_R;
 
 /*f(x) int */
 static boolean
@@ -78,6 +80,9 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Init(void)
   AppMotor.DeviceDriverSet_Motor_Init();
   AppULTRASONIC_L.DeviceDriverSet_ULTRASONIC_Init_L();
   AppULTRASONIC_R.DeviceDriverSet_ULTRASONIC_Init_R();
+  AppULTRASONIC_OBS_M.DeviceDriverSet_ULTRASONIC_Init_OBS_M();
+  AppULTRASONIC_OBS_L.DeviceDriverSet_ULTRASONIC_Init_OBS_L();
+  AppULTRASONIC_OBS_R.DeviceDriverSet_ULTRASONIC_Init_OBS_R();
 
   while (Serial.read() >= 0)
   {
@@ -162,30 +167,56 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
   if (Application_SmartRobotCarxxx0.Functional_Mode == ObstacleAvoidance_mode) {
     uint16_t get_Distance_L;
     uint16_t get_Distance_R;
+    uint16_t get_Distance_OBS_L;
+    uint16_t get_Distance_OBS_M;
+    uint16_t get_Distance_OBS_R;
 
     AppULTRASONIC_L.DeviceDriverSet_ULTRASONIC_Get_L(&get_Distance_L /*out*/);
-    Serial.print("ULTRASONIC_L=");
-    Serial.println(get_Distance_L);
+    // Serial.print("ULTRASONIC_L=");
+    // Serial.println(get_Distance_L);
     AppULTRASONIC_R.DeviceDriverSet_ULTRASONIC_Get_R(&get_Distance_R /*out*/);
-    Serial.print("ULTRASONIC_R=");
-    Serial.println(get_Distance_R);
+    // Serial.print("ULTRASONIC_R=");
+    // Serial.println(get_Distance_R);
+    AppULTRASONIC_OBS_L.DeviceDriverSet_ULTRASONIC_Get_OBS_L(&get_Distance_OBS_L /*out*/);
+    Serial.print("ULTRASONIC_OBS_L=");
+    Serial.println(get_Distance_OBS_L);
+    AppULTRASONIC_OBS_M.DeviceDriverSet_ULTRASONIC_Get_OBS_M(&get_Distance_OBS_M /*out*/);
+    Serial.print("ULTRASONIC_OBS_M=");
+    Serial.println(get_Distance_OBS_M);
+    AppULTRASONIC_OBS_R.DeviceDriverSet_ULTRASONIC_Get_OBS_R(&get_Distance_OBS_R /*out*/);
+    Serial.print("ULTRASONIC_OBS_R=");
+    Serial.println(get_Distance_OBS_R);
 
-
-    if (function_xxx(get_Distance_L, 0, 1) || function_xxx(get_Distance_R, 0, 1)) {
+    if (function_xxx(get_Distance_L, 0, 1) || function_xxx(get_Distance_R, 0, 1) || function_xxx(get_Distance_OBS_L, 0, 1) || function_xxx(get_Distance_OBS_M, 0, 1) || function_xxx(get_Distance_OBS_R, 0, 1)) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 50);
       Serial.println("Not Plugged In");
       delay_xxx(50);
+    } else if (function_xxx(get_Distance_OBS_M, 1, 10)) {
+      int randomDirection = (rand() % 2);
+      if (randomDirection == 0) {
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 50);
+        delay_xxx(1000);
+      } else {
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 50);
+        delay_xxx(1000);
+      }
+    } else if (function_xxx(get_Distance_OBS_L, 1, 10)) {
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 50);
+      delay_xxx(50);
+    } else if (function_xxx(get_Distance_OBS_R, 1, 10)) {
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 50);
+      delay_xxx(50);
     } else if (function_xxx(get_Distance_L, 1, 10) && function_xxx(get_Distance_R, 1, 10)) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
-      Serial.println("Forward");
+      // Serial.println("Forward");
       delay_xxx(50);
     } else if (function_xxx(get_Distance_L, 1, 10)) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 50);
-      Serial.println("Left");
+      // Serial.println("Left");
       delay_xxx(500);
     } else if (function_xxx(get_Distance_R, 1, 10)) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 50);
-      Serial.println("Right");
+      // Serial.println("Right");
       delay_xxx(500);
     } else {
       // Seed the random number generator with the current time
@@ -193,24 +224,27 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
       // Generate a random integer between 0 and RAND_MAX
       int randomTime = (rand() % (3000 - 1000 + 1)) + 1000;
       int randomDirection = (rand() % 2);
-      Serial.println(randomTime);
-      Serial.println(randomDirection);
+      // Serial.println(randomTime);
+      // Serial.println(randomDirection);
 
       if (randomDirection == 0) {
         ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 50);
         delay_xxx(1000);
         ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 50);
-        Serial.println("Back Right");
+        // Serial.println("Back Right");
         delay_xxx(randomTime);
       } else {
         ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 50);
         delay_xxx(1000);
         ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 50);
-        Serial.println("Back Left");
+        // Serial.println("Back Left");
         delay_xxx(randomTime);
       }
 
     }
+
+    
+
 
   } else {
     Serial.println("Error: Not in Obstacle Avoidance Mode?");
