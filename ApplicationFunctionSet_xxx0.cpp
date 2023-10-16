@@ -189,8 +189,12 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
 
 
 
-    int randomTime = (rand() % (2000 - 1000 + 1)) + 1000;
-    int randomDirection = (rand() % 2);
+    //int randomTime = (rand() % (2000 - 1000)) + 1000;
+    //int randomDirection = (rand() % 2);
+    // Simplified and changed range from 1000 ms - 2000 ms to 500 ms - 2000 ms
+
+    int randomTime = random(500, 2000);
+    int randomDirection = random(0, 1);
     
     if (function_xxx(get_Distance_L, 0, 0) || function_xxx(get_Distance_R, 0, 0) || function_xxx(get_Distance_OBS_L, 0, 0) || function_xxx(get_Distance_OBS_M, 0, 0) || function_xxx(get_Distance_OBS_R, 0, 0)) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 50);
