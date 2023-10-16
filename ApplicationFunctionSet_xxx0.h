@@ -16,14 +16,6 @@ class ApplicationFunctionSet
 public:
   void ApplicationFunctionSet_Init(void);
   void ApplicationFunctionSet_Obstacle(void);           //避障
-  
-private:
-  volatile uint16_t UltrasoundData_mm; //超声波数据
-  volatile uint16_t UltrasoundData_cm; //超声波数据
-  boolean UltrasoundDetectionStatus = false;
-public:
-  boolean Car_LeaveTheGround = true;
-  const int ObstacleDetection = 20;
 };
 extern ApplicationFunctionSet Application_FunctionSet;
 #endif
