@@ -73,8 +73,8 @@ private:
 #define ECHO_PIN_OBS_L 25
 #define TRIG_PIN_OBS_M 26
 #define ECHO_PIN_OBS_M 24
-#define TRIG_PIN_OBS_R 30
-#define ECHO_PIN_OBS_R 31
+#define TRIG_PIN_OBS_R 35
+#define ECHO_PIN_OBS_R 33
 #define MAX_DISTANCE 200 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
 };
 

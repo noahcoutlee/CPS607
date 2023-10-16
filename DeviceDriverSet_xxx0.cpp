@@ -140,8 +140,8 @@ void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Init_OBS_R(void)
 {
   pinMode(ECHO_PIN_OBS_R, INPUT); //Ultrasonic module initialization
   pinMode(TRIG_PIN_OBS_R, OUTPUT);
-  // pinMode(28, OUTPUT);
-  // pinMode(22, INPUT);
+  pinMode(37, OUTPUT);
+  pinMode(31, INPUT);
 }
 
 void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Get_L(uint16_t *ULTRASONIC_Get_L /*out*/)
@@ -198,7 +198,7 @@ void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Get_OBS_M(uint16_t *
 void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Get_OBS_R(uint16_t *ULTRASONIC_Get_OBS_R /*out*/)
 {
   unsigned int tempda_x_R = 0;
-  // digitalWrite(28, HIGH);
+  digitalWrite(37, HIGH);
   digitalWrite(TRIG_PIN_OBS_R, LOW);
   delayMicroseconds(2);
   digitalWrite(TRIG_PIN_OBS_R, HIGH);
