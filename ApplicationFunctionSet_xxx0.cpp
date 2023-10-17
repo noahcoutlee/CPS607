@@ -172,11 +172,11 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
     uint16_t get_Distance_OBS_R;
 
     AppULTRASONIC_L.DeviceDriverSet_ULTRASONIC_Get_L(&get_Distance_L /*out*/);
-    // Serial.print("ULTRASONIC_L=");
-    // Serial.println(get_Distance_L);
+    Serial.print("ULTRASONIC_L=");
+    Serial.println(get_Distance_L);
     AppULTRASONIC_R.DeviceDriverSet_ULTRASONIC_Get_R(&get_Distance_R /*out*/);
-    // Serial.print("ULTRASONIC_R=");
-    // Serial.println(get_Distance_R);
+    Serial.print("ULTRASONIC_R=");
+    Serial.println(get_Distance_R);
     AppULTRASONIC_OBS_L.DeviceDriverSet_ULTRASONIC_Get_OBS_L(&get_Distance_OBS_L /*out*/);
     Serial.print("ULTRASONIC_OBS_L=");
     Serial.println(get_Distance_OBS_L);
@@ -199,6 +199,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
     if (function_xxx(get_Distance_L, 0, 0) || function_xxx(get_Distance_R, 0, 0) || function_xxx(get_Distance_OBS_L, 0, 0) || function_xxx(get_Distance_OBS_M, 0, 0) || function_xxx(get_Distance_OBS_R, 0, 0)) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 50);
       
+
       if (function_xxx(get_Distance_L, 0, 0)){
         Serial.println("Not Plugged In Top L");}
       else if (function_xxx(get_Distance_R, 0, 0)){
@@ -206,41 +207,83 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
       delay_xxx(50);
 
 
-    
-    } else if (function_xxx(get_Distance_OBS_L, 1, 15)) {
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 50);
-      delay_xxx(randomTime);
-    } else if (function_xxx(get_Distance_OBS_R, 1, 15)) {
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 50);
-      delay_xxx(randomTime);
     } else if (function_xxx(get_Distance_OBS_M, 1, 15)) {
-      if (randomDirection == 0) {
+      Serial.println("OBS Mid Far");
+      
+
+      if (get_Distance_OBS_L < get_Distance_OBS_R) {
         ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 50);
-        delay_xxx(randomTime);
-      } else {
+        delay_xxx(50);
+      } else if (get_Distance_OBS_L > get_Distance_OBS_R) {
         ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 50);
-        delay_xxx(randomTime);
+        delay_xxx(50);
+      } else {
+        if (randomDirection == 0) {
+          ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 50);
+          delay_xxx(100);
+        } else {
+          ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 50);
+          delay_xxx(100);
+        }
       }
-    } else if (function_xxx(get_Distance_L, 1, 10) && function_xxx(get_Distance_R, 1, 10)) {
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
-      // Serial.println("Forward");
-      delay_xxx(50);
-    } else if (function_xxx(get_Distance_L, 1, 10)) {
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 50);
-      // Serial.println("Left");
-      delay_xxx(randomTime);
-    } else if (function_xxx(get_Distance_R, 1, 10)) {
+
+
+      // ################# OTHER CLOSE CODE
+      // if (function_xxx(get_Distance_OBS_L, 1, 20) && !function_xxx(get_Distance_OBS_R, 1, 20)) {
+      //   ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 50);
+      //   delay_xxx(50);
+      // } else if (!function_xxx(get_Distance_OBS_L, 1, 20) && function_xxx(get_Distance_OBS_R, 1, 20)) {
+      //   ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 50);
+      //   delay_xxx(50);
+      // } else {
+      //   if (randomDirection == 0) {
+      //     ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 50);
+      //     delay_xxx(100);
+      //   } else {
+      //     ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 50);
+      //     delay_xxx(100);
+      //   }
+      // }
+
+
+    // ###################### CLOSE SUICIDE CODE
+    // } else if (function_xxx(get_Distance_OBS_M, 1, 8)) {
+    //   Serial.println("OBS Mid Close");
+      
+    //   ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 50);
+    //   delay_xxx(1000);
+    //   if (function_xxx(get_Distance_OBS_L, 1, 10) && !function_xxx(get_Distance_OBS_R, 1, 10)) {
+    //     ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 50);
+    //     delay_xxx(50);
+    //   } else if (!function_xxx(get_Distance_OBS_L, 1, 10) && function_xxx(get_Distance_OBS_R, 1, 10)) {
+    //     ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 50);
+    //     delay_xxx(50);
+    //   } else {
+    //     if (randomDirection == 0) {
+    //       ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 50);
+    //       delay_xxx(100);
+    //     } else {
+    //       ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 50);
+    //       delay_xxx(100);
+    //     }
+    //   }
+    } else if (function_xxx(get_Distance_OBS_L, 1, 10)) {
+      Serial.println("OBS Left");
       ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 50);
-      // Serial.println("Right");
-      delay_xxx(randomTime);
-    } else {
+      delay_xxx(50);
+    } else if (function_xxx(get_Distance_OBS_R, 1, 10)) {
+      Serial.println("OBS Right");
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 50);
+      delay_xxx(50);
+
+    } else if (!function_xxx(get_Distance_L, 1, 10) && !function_xxx(get_Distance_R, 1, 10)) {
       // Seed the random number generator with the current time
       // srand(time(NULL));
       // Generate a random integer between 0 and RAND_MAX
       
       // Serial.println(randomTime);
       // Serial.println(randomDirection);
-
+      Serial.println("Both Top");
       if (randomDirection == 0) {
         ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 50);
         delay_xxx(500);
@@ -254,7 +297,18 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
         // Serial.println("Back Left");
         delay_xxx(randomTime);
       }
-
+    } else if (!function_xxx(get_Distance_L, 1, 10)) {
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 50);
+      Serial.println("Top Left");
+      delay_xxx(randomTime);
+    } else if (!function_xxx(get_Distance_R, 1, 10)) {
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 50);
+      Serial.println("Top Right");
+      delay_xxx(randomTime);
+    } else {
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
+      Serial.println("Forward");
+      delay_xxx(50);
     }
 
     
