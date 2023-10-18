@@ -15,7 +15,7 @@ class ApplicationFunctionSet
 {
 public:
   void ApplicationFunctionSet_Init(void);
-  void ApplicationFunctionSet_Obstacle(void);           //避障
+  void ApplicationFunctionSet_Obstacle(void);
 };
 extern ApplicationFunctionSet Application_FunctionSet;
 #endif
