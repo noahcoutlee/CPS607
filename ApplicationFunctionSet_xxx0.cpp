@@ -230,27 +230,27 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
     } else if (function_xxx(get_Distance_OBS_M, 1, 15)) {
       Serial.println("OBS Mid");
       if (get_Distance_OBS_L < get_Distance_OBS_R) {
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 100);
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
         delay_xxx(25);
       } else if (get_Distance_OBS_L > get_Distance_OBS_R) {
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
         delay_xxx(25);
       } else {
         if (randomDirection == 0) {
-          ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 100);
+          ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
           delay_xxx(50);
         } else {
-          ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);
+          ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
           delay_xxx(50);
         }
       }
-    } else if (function_xxx(get_Distance_OBS_L, 1, 10)) {
+    } else if (function_xxx(get_Distance_OBS_L, 1, 12)) {
       Serial.println("OBS Left");
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 100);
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
       delay_xxx(25);
-    } else if (function_xxx(get_Distance_OBS_R, 1, 10)) {
+    } else if (function_xxx(get_Distance_OBS_R, 1, 12)) {
       Serial.println("OBS Right");
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
       delay_xxx(25);
     } else if (!function_xxx(get_Distance_L, 1, 10) && !function_xxx(get_Distance_R, 1, 10)) {
       Serial.println("Both Top");
