@@ -30,6 +30,7 @@ DeviceDriverSet_ULTRASONIC AppULTRASONIC_R;
 DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_L;
 DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_M;
 DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_R;
+DeviceDriverSet_ITR20001 AppITR20001;
 
 /*f(x) int */
 static boolean
@@ -88,6 +89,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Init(void)
   bool res_error = true;
   Serial.begin(9600);
   AppMotor.DeviceDriverSet_Motor_Init();
+  AppITR20001.DeviceDriverSet_ITR20001_Init();
   AppULTRASONIC_L.DeviceDriverSet_ULTRASONIC_Init_L();
   AppULTRASONIC_R.DeviceDriverSet_ULTRASONIC_Init_R();
   AppULTRASONIC_OBS_M.DeviceDriverSet_ULTRASONIC_Init_OBS_M();
@@ -173,6 +175,59 @@ static void delay_xxx(uint16_t _ms)
     delay(1);
   }
 }
+
+void ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
+{ 
+    float getAnaloguexxx_L = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L();
+    float getAnaloguexxx_M = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M();
+    float getAnaloguexxx_R = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R();
+    static unsigned long lineDetectionStartTime = 0;
+    
+  if (function_xxx(getAnaloguexxx_M, TrackingDetection_S, TrackingDetection_E))
+    {
+      if (lineDetectionStartTime == 0) {
+          lineDetectionStartTime = millis(); // Start the timer
+      }
+
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
+      Serial.println("Forward");
+      delay_xxx(10);
+        
+    }
+    else if (function_xxx(getAnaloguexxx_R, TrackingDetection_S, TrackingDetection_E))
+    {
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
+        delay_xxx(10);
+    }
+    else if (function_xxx(getAnaloguexxx_L, TrackingDetection_S, TrackingDetection_E))
+    {
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
+        delay_xxx(10);
+    }
+    else
+    {
+
+      if (millis() - lineDetectionStartTime <= 1000) { // If line detected for 1 second
+        // Go back and try to find the line
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 50);
+        Serial.println("Going Backward to Find Line");
+        delay_xxx(500);
+        
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
+        delay_xxx(300);
+        lineDetectionStartTime = 0;
+      }
+      else {
+          ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
+          delay_xxx(10);
+          lineDetectionStartTime = 0; // Reset the timer when the line is not detected
+    
+      }
+    
+    }
+    
+}
+
 
 /*
   Obstacle avoidance function
@@ -276,14 +331,12 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
       Serial.println("Top Right");
       delay_xxx(randomTime);
     } else {
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
-      Serial.println("Forward");
-      delay_xxx(50);
+        ApplicationFunctionSet_Tracking(); 
     }
   } else {
     Serial.println("Error: Not in Obstacle Avoidance Mode?");
   }
 
-  // Use this to slowly display values when monitoring
-  // delay_xxx(2000);
+
 }
+
