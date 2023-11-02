@@ -183,8 +183,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
     float getAnaloguexxx_R = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R();
     static unsigned long lineDetectionStartTime = 0;
     
-  if (function_xxx(getAnaloguexxx_M, TrackingDetection_S, TrackingDetection_E))
-    {
+    if (function_xxx(getAnaloguexxx_M, TrackingDetection_S, TrackingDetection_E)) {
       if (lineDetectionStartTime == 0) {
           lineDetectionStartTime = millis(); // Start the timer
       }
@@ -192,40 +191,34 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
       ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
       Serial.println("Forward");
       delay_xxx(10);
-        
+    } else if (function_xxx(getAnaloguexxx_R, TrackingDetection_S, TrackingDetection_E)) {
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
+      delay_xxx(10);
     }
-    else if (function_xxx(getAnaloguexxx_R, TrackingDetection_S, TrackingDetection_E))
-    {
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
-        delay_xxx(10);
-    }
-    else if (function_xxx(getAnaloguexxx_L, TrackingDetection_S, TrackingDetection_E))
-    {
+    else if (function_xxx(getAnaloguexxx_L, TrackingDetection_S, TrackingDetection_E)) {
         ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
         delay_xxx(10);
-    }
-    else
-    {
-
+    } else {
       if (millis() - lineDetectionStartTime <= 1000) { // If line detected for 1 second
         // Go back and try to find the line
         ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 50);
         Serial.println("Going Backward to Find Line");
-        delay_xxx(500);
+        delay_xxx(300);
         
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
+        int randomDirection = random(0, 2);
+        // if (randomDirection == 0) {
+        //   ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
+        // } else {
+          ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
+        // }
         delay_xxx(300);
         lineDetectionStartTime = 0;
+      } else {
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
+        delay_xxx(10);
+        lineDetectionStartTime = 0; // Reset the timer when the line is not detected
       }
-      else {
-          ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
-          delay_xxx(10);
-          lineDetectionStartTime = 0; // Reset the timer when the line is not detected
-    
-      }
-    
     }
-    
 }
 
 
@@ -273,7 +266,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
     }
 
     int randomTime = random(250, 750);
-    int randomDirection = random(0, 1);
+    int randomDirection = random(0, 2);
     
     if (function_xxx(get_Distance_L, 0, 0) || function_xxx(get_Distance_R, 0, 0) || function_xxx(get_Distance_OBS_L, 0, 0) || function_xxx(get_Distance_OBS_M, 0, 0) || function_xxx(get_Distance_OBS_R, 0, 0)) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
@@ -293,10 +286,10 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
       } else {
         if (randomDirection == 0) {
           ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
-          delay_xxx(50);
+          delay_xxx(25);
         } else {
           ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
-          delay_xxx(50);
+          delay_xxx(25);
         }
       }
     } else if (function_xxx(get_Distance_OBS_L, 1, 12)) {
@@ -309,19 +302,16 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
       delay_xxx(25);
     } else if (!function_xxx(get_Distance_L, 1, 10) && !function_xxx(get_Distance_R, 1, 10)) {
       Serial.println("Both Top");
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 50);
+      delay_xxx(500);
       if (randomDirection == 0) {
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 50);
-        delay_xxx(500);
         ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 100);
         // Serial.println("Back Right");
-        delay_xxx(randomTime);
       } else {
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 50);
-        delay_xxx(500);
         ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);
         // Serial.println("Back Left");
-        delay_xxx(randomTime);
       }
+      delay_xxx(randomTime);
     } else if (!function_xxx(get_Distance_L, 1, 10)) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 100);
       Serial.println("Top Left");
@@ -331,12 +321,10 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
       Serial.println("Top Right");
       delay_xxx(randomTime);
     } else {
-        ApplicationFunctionSet_Tracking(); 
+      ApplicationFunctionSet_Tracking();
     }
   } else {
     Serial.println("Error: Not in Obstacle Avoidance Mode?");
   }
-
-
 }
 
