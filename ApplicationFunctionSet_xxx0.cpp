@@ -42,6 +42,13 @@ function_xxx(long x, long s, long e) //f(x)
     return false;
 }
 
+unsigned long operationStartTime;
+unsigned long tempTime;
+
+
+bool someOperationFlag = false;
+
+
 /*运动方向控制序列*/
 enum SmartRobotCarMotionControl
 {
@@ -176,48 +183,71 @@ static void delay_xxx(uint16_t _ms)
   }
 }
 
+// void loop(){
+//     if(somethingDetected()){
+//         operationStartTime=millis();
+//         startSomeOperation();
+//         someOperationFlag = true;
+//     }
+
+//     if(someOperationFlag){
+//         tempTime = millis();
+//         if(tempTime >= operationStartTime + someOffset){
+//             startDoingSomethingElse();
+//             someOperationFlag = false;
+//         }        
+//     }
+// }
+
+int randomDirectionForLineTracking = -1;
+
+
 void ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
 { 
     float getAnaloguexxx_L = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L();
     float getAnaloguexxx_M = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M();
     float getAnaloguexxx_R = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R();
-    static unsigned long lineDetectionStartTime = 0;
+    static unsigned long lastTimeLineWasDetected;
     
     if (function_xxx(getAnaloguexxx_M, TrackingDetection_S, TrackingDetection_E)) {
-      if (lineDetectionStartTime == 0) {
-          lineDetectionStartTime = millis(); // Start the timer
-      }
-
+      lastTimeLineWasDetected = millis(); // Start the timer
       ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
+
       Serial.println("Forward");
-      delay_xxx(10);
+      // delay_xxx(10);
     } else if (function_xxx(getAnaloguexxx_R, TrackingDetection_S, TrackingDetection_E)) {
+      lastTimeLineWasDetected = millis();
       ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
-      delay_xxx(10);
+      // delay_xxx(10);
     }
     else if (function_xxx(getAnaloguexxx_L, TrackingDetection_S, TrackingDetection_E)) {
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
-        delay_xxx(10);
+      lastTimeLineWasDetected = millis();
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
+        // delay_xxx(10);
     } else {
-      if (millis() - lineDetectionStartTime <= 1000) { // If line detected for 1 second
-        // Go back and try to find the line
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 50);
-        Serial.println("Going Backward to Find Line");
-        delay_xxx(300);
+
+
+      if (millis() - lastTimeLineWasDetected <= 5000) { // If line last detected for 1 second
+
         
-        int randomDirection = random(0, 2);
-        // if (randomDirection == 0) {
-        //   ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
-        // } else {
+
+        if (randomDirectionForLineTracking == -1) {
+          randomDirectionForLineTracking = random(0, 2);
+        } else if (randomDirectionForLineTracking == 0) {
           ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
-        // }
-        delay_xxx(300);
-        lineDetectionStartTime = 0;
+        } else {
+          ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
+        }
+
+
       } else {
         ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
-        delay_xxx(10);
-        lineDetectionStartTime = 0; // Reset the timer when the line is not detected
+        randomDirectionForLineTracking = -1;
+        lastTimeLineWasDetected = 0; // Reset the timer when the line is not detected
       }
+
+
+
     }
 }
 
@@ -315,11 +345,11 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
     } else if (!function_xxx(get_Distance_L, 1, 10)) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 100);
       Serial.println("Top Left");
-      delay_xxx(randomTime);
+      // delay_xxx(randomTime);
     } else if (!function_xxx(get_Distance_R, 1, 10)) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);
       Serial.println("Top Right");
-      delay_xxx(randomTime);
+      // delay_xxx(randomTime);
     } else {
       ApplicationFunctionSet_Tracking();
     }
