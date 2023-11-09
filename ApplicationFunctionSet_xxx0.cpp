@@ -19,7 +19,7 @@
 // When enabled the robot will output values but the motors will not activate
 #define freeze_mode_enabled false
 // Shows all values regardless of if the value has changed
-#define alwaysShow true
+#define alwaysShow false
 
 ApplicationFunctionSet Application_FunctionSet;
 
@@ -88,6 +88,8 @@ uint16_t oldR = 0;
 uint16_t oldOBSL = 0;
 uint16_t oldOBSM = 0;
 uint16_t oldOBSR = 0;
+
+
 
 void ApplicationFunctionSet_SmartRobotCarMotionControl(SmartRobotCarMotionControl direction, uint8_t is_speed);
 
@@ -183,80 +185,77 @@ static void delay_xxx(uint16_t _ms)
   }
 }
 
-// void loop(){
-//     if(somethingDetected()){
-//         operationStartTime=millis();
-//         startSomeOperation();
-//         someOperationFlag = true;
-//     }
+char lastPrintStatement[100]; 
+static void printOnce(const char* tryingToPrint) {
+  if (strcmp(tryingToPrint, lastPrintStatement) != 0) {
+        // "The strings are not equal.
+        // Serial.print("tryingToPrint: ");
+        Serial.println(tryingToPrint);
+        // Serial.print("lastPrintStatement: ");
+        // Serial.println(lastPrintStatement);
+        strcpy(lastPrintStatement, tryingToPrint);
 
-//     if(someOperationFlag){
-//         tempTime = millis();
-//         if(tempTime >= operationStartTime + someOffset){
-//             startDoingSomethingElse();
-//             someOperationFlag = false;
-//         }        
-//     }
-// }
+    } else {
+        // The strings are equal.
+    }
+}
+
 
 int randomDirectionForLineTracking = -1;
-
+long lastTimeLineWasDetected = millis();
 
 void ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
 { 
     float getAnaloguexxx_L = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L();
     float getAnaloguexxx_M = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M();
     float getAnaloguexxx_R = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R();
-    static unsigned long lastTimeLineWasDetected;
     
     if (function_xxx(getAnaloguexxx_M, TrackingDetection_S, TrackingDetection_E)) {
       lastTimeLineWasDetected = millis(); // Start the timer
       ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
-
-      Serial.println("Forward");
-      // delay_xxx(10);
+      printOnce("LT: Mid");
     } else if (function_xxx(getAnaloguexxx_R, TrackingDetection_S, TrackingDetection_E)) {
       lastTimeLineWasDetected = millis();
       ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
-      // delay_xxx(10);
+      printOnce("LT: Right");
     }
     else if (function_xxx(getAnaloguexxx_L, TrackingDetection_S, TrackingDetection_E)) {
       lastTimeLineWasDetected = millis();
       ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
-        // delay_xxx(10);
+      printOnce("LT: Left");
     } else {
-
-
-      if (millis() - lastTimeLineWasDetected <= 5000) { // If line last detected for 1 second
-
-        
+      if (millis() - lastTimeLineWasDetected <= 5000) { // If line last detected for 5 second
 
         if (randomDirectionForLineTracking == -1) {
           randomDirectionForLineTracking = random(0, 2);
         } else if (randomDirectionForLineTracking == 0) {
           ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
+          printOnce("Looking for Line: Right");
         } else {
           ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
+          printOnce("Looking for Line: Left");
         }
 
-
       } else {
+        printOnce("LT: Forward");
         ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
         randomDirectionForLineTracking = -1;
         lastTimeLineWasDetected = 0; // Reset the timer when the line is not detected
       }
 
 
-
     }
 }
+
 
 
 /*
   Obstacle avoidance function
 */
-void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
+long tempDisableLineTracking = millis();
 
+void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
+  
   if (Application_SmartRobotCarxxx0.Functional_Mode == ObstacleAvoidance_mode) {
     uint16_t get_Distance_L;
     uint16_t get_Distance_R;
@@ -267,94 +266,103 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
     AppULTRASONIC_L.DeviceDriverSet_ULTRASONIC_Get_L(&get_Distance_L /*out*/);
     if (oldL != get_Distance_L || alwaysShow) {
       oldL = get_Distance_L;
-      Serial.print("ULTRASONIC_L=");
-      Serial.println(get_Distance_L);
+      // Serial.print("ULTRASONIC_L=");
+      // Serial.println(get_Distance_L);
     }
     AppULTRASONIC_R.DeviceDriverSet_ULTRASONIC_Get_R(&get_Distance_R /*out*/);
     if (oldR != get_Distance_R || alwaysShow) {
       oldR = get_Distance_R;
-      Serial.print("ULTRASONIC_R=");
-      Serial.println(get_Distance_R);
+      // Serial.print("ULTRASONIC_R=");
+      // Serial.println(get_Distance_R);
     }
     AppULTRASONIC_OBS_L.DeviceDriverSet_ULTRASONIC_Get_OBS_L(&get_Distance_OBS_L /*out*/);
     if (oldOBSL != get_Distance_OBS_L || alwaysShow) {
       oldOBSL = get_Distance_OBS_L;
-      Serial.print("ULTRASONIC_OBS_L=");
-      Serial.println(get_Distance_OBS_L);
+      // Serial.print("ULTRASONIC_OBS_L=");
+      // Serial.println(get_Distance_OBS_L);
     }
     AppULTRASONIC_OBS_M.DeviceDriverSet_ULTRASONIC_Get_OBS_M(&get_Distance_OBS_M /*out*/);
     if (oldOBSM != get_Distance_OBS_M || alwaysShow) {
       oldOBSM = get_Distance_OBS_M;
-      Serial.print("ULTRASONIC_OBS_M=");
-      Serial.println(get_Distance_OBS_M);
+      // Serial.print("ULTRASONIC_OBS_M=");
+      // Serial.println(get_Distance_OBS_M);
     }
     AppULTRASONIC_OBS_R.DeviceDriverSet_ULTRASONIC_Get_OBS_R(&get_Distance_OBS_R /*out*/);
     if (oldOBSR != get_Distance_OBS_R || alwaysShow) {
       oldOBSR = get_Distance_OBS_R;
-      Serial.print("ULTRASONIC_OBS_R=");
-      Serial.println(get_Distance_OBS_R);
+      // Serial.print("ULTRASONIC_OBS_R=");
+      // Serial.println(get_Distance_OBS_R);
     }
 
-    int randomTime = random(250, 750);
+    int randomTime = random(50, 500);
     int randomDirection = random(0, 2);
     
     if (function_xxx(get_Distance_L, 0, 0) || function_xxx(get_Distance_R, 0, 0) || function_xxx(get_Distance_OBS_L, 0, 0) || function_xxx(get_Distance_OBS_M, 0, 0) || function_xxx(get_Distance_OBS_R, 0, 0)) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
       if (function_xxx(get_Distance_L, 0, 0)){
-        Serial.println("Not Plugged In Top L");}
+        printOnce("Not Plugged In Top L");}
       else if (function_xxx(get_Distance_R, 0, 0)){
-        Serial.println("Not Plugged In Top R");}
-      delay_xxx(50);
-    } else if (function_xxx(get_Distance_OBS_M, 1, 15)) {
-      Serial.println("OBS Mid");
+        printOnce("Not Plugged In Top R");}
+    } else if (function_xxx(get_Distance_OBS_M, 1, 10)) {
+      printOnce("Ultra: OBS Mid");
       if (get_Distance_OBS_L < get_Distance_OBS_R) {
         ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
-        delay_xxx(25);
+        delay_xxx(50);
       } else if (get_Distance_OBS_L > get_Distance_OBS_R) {
         ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
-        delay_xxx(25);
+        delay_xxx(50);
       } else {
         if (randomDirection == 0) {
           ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
-          delay_xxx(25);
+          delay_xxx(50);
         } else {
           ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
-          delay_xxx(25);
+          delay_xxx(50);
         }
       }
-    } else if (function_xxx(get_Distance_OBS_L, 1, 12)) {
-      Serial.println("OBS Left");
+      tempDisableLineTracking = millis();
+      lastTimeLineWasDetected = lastTimeLineWasDetected - 5000;
+    } else if (function_xxx(get_Distance_OBS_L, 1, 8)) {
+      printOnce("Ultra: OBS Left");
       ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
       delay_xxx(25);
-    } else if (function_xxx(get_Distance_OBS_R, 1, 12)) {
-      Serial.println("OBS Right");
+      tempDisableLineTracking = millis();
+      lastTimeLineWasDetected = lastTimeLineWasDetected - 5000;
+    } else if (function_xxx(get_Distance_OBS_R, 1, 8)) {
+      printOnce("Ultra: OBS Right");
       ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
       delay_xxx(25);
+      tempDisableLineTracking = millis();
+      lastTimeLineWasDetected = lastTimeLineWasDetected - 5000;
     } else if (!function_xxx(get_Distance_L, 1, 10) && !function_xxx(get_Distance_R, 1, 10)) {
-      Serial.println("Both Top");
+      printOnce("Ultra: Top Both");
       ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 50);
       delay_xxx(500);
       if (randomDirection == 0) {
         ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 100);
-        // Serial.println("Back Right");
+        // printOnce("Back Right");
       } else {
         ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);
-        // Serial.println("Back Left");
+        // printOnce("Back Left");
       }
       delay_xxx(randomTime);
     } else if (!function_xxx(get_Distance_L, 1, 10)) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 100);
-      Serial.println("Top Left");
+      printOnce("Ultra: Top Left");
       // delay_xxx(randomTime);
     } else if (!function_xxx(get_Distance_R, 1, 10)) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);
-      Serial.println("Top Right");
+      printOnce("Ultra: Top Right");
       // delay_xxx(randomTime);
-    } else {
+    } else if (millis() - tempDisableLineTracking >= 1000) {
+      
       ApplicationFunctionSet_Tracking();
+    } else {
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
+      printOnce("ELSE: Forward");
     }
   } else {
-    Serial.println("Error: Not in Obstacle Avoidance Mode?");
+    printOnce("Error: Not in Obstacle Avoidance Mode?");
   }
 }
 
