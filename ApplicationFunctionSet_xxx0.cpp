@@ -224,7 +224,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
       ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
       printOnce("LT: Left");
     } else {
-      if (millis() - lastTimeLineWasDetected <= 5000) { // If line last detected for 5 second
+      if (millis() - lastTimeLineWasDetected <= 2000) { // If line last detected for 2 second
 
         if (randomDirectionForLineTracking == -1) {
           randomDirectionForLineTracking = random(0, 2);
@@ -303,7 +303,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
         printOnce("Not Plugged In Top L");}
       else if (function_xxx(get_Distance_R, 0, 0)){
         printOnce("Not Plugged In Top R");}
-    } else if (function_xxx(get_Distance_OBS_M, 1, 10)) {
+    } else if (function_xxx(get_Distance_OBS_M, 1, 15)) {
       printOnce("Ultra: OBS Mid");
       if (get_Distance_OBS_L < get_Distance_OBS_R) {
         ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
@@ -322,13 +322,13 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
       }
       tempDisableLineTracking = millis();
       lastTimeLineWasDetected = lastTimeLineWasDetected - 5000;
-    } else if (function_xxx(get_Distance_OBS_L, 1, 8)) {
+    } else if (function_xxx(get_Distance_OBS_L, 1, 12)) {
       printOnce("Ultra: OBS Left");
       ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
       delay_xxx(25);
       tempDisableLineTracking = millis();
       lastTimeLineWasDetected = lastTimeLineWasDetected - 5000;
-    } else if (function_xxx(get_Distance_OBS_R, 1, 8)) {
+    } else if (function_xxx(get_Distance_OBS_R, 1, 12)) {
       printOnce("Ultra: OBS Right");
       ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
       delay_xxx(25);
