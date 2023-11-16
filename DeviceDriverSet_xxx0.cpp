@@ -138,6 +138,13 @@ void DeviceDriverSet_Motor::DeviceDriverSet_Motor_control(boolean direction_A, u
   }
 }
 
+// IR sensor
+
+void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_IR_Init(void)
+{
+  pinMode(IN_IR, INPUT);
+}
+
 
 /*ULTRASONIC*/
 //#include <NewPing.h>
@@ -176,6 +183,11 @@ void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Init_OBS_R(void)
   pinMode(TRIG_PIN_OBS_R, OUTPUT);
   pinMode(37, OUTPUT);
   pinMode(31, INPUT);
+}
+
+void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_Get_IR(uint16_t *Get_IR /*out*/)
+{
+  *Get_IR = analogRead(IN_IR);
 }
 
 void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Get_L(uint16_t *ULTRASONIC_Get_L /*out*/)

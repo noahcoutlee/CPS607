@@ -17,7 +17,7 @@
 #define _is_print 1
 #define _Test_print 0
 // When enabled the robot will output values but the motors will not activate
-#define freeze_mode_enabled false
+#define freeze_mode_enabled true
 // Shows all values regardless of if the value has changed
 #define alwaysShow false
 
@@ -30,6 +30,7 @@ DeviceDriverSet_ULTRASONIC AppULTRASONIC_R;
 DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_L;
 DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_M;
 DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_R;
+DeviceDriverSet_ULTRASONIC AppIR;
 DeviceDriverSet_ITR20001 AppITR20001;
 
 /*f(x) int */
@@ -104,6 +105,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Init(void)
   AppULTRASONIC_OBS_M.DeviceDriverSet_ULTRASONIC_Init_OBS_M();
   AppULTRASONIC_OBS_L.DeviceDriverSet_ULTRASONIC_Init_OBS_L();
   AppULTRASONIC_OBS_R.DeviceDriverSet_ULTRASONIC_Init_OBS_R();
+  AppIR.DeviceDriverSet_IR_Init();
 
   while (Serial.read() >= 0)
   {
@@ -262,6 +264,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
     uint16_t get_Distance_OBS_L;
     uint16_t get_Distance_OBS_M;
     uint16_t get_Distance_OBS_R;
+    uint16_t get_IR;
 
     AppULTRASONIC_L.DeviceDriverSet_ULTRASONIC_Get_L(&get_Distance_L /*out*/);
     if (oldL != get_Distance_L || alwaysShow) {
@@ -294,6 +297,8 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
       // Serial.println(get_Distance_OBS_R);
     }
 
+    AppIR.DeviceDriverSet_Get_IR(&get_IR /*out*/);
+
     int randomTime = random(50, 500);
     int randomDirection = random(0, 2);
     
@@ -303,6 +308,14 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void) {
         printOnce("Not Plugged In Top L");}
       else if (function_xxx(get_Distance_R, 0, 0)){
         printOnce("Not Plugged In Top R");}
+    } else if (function_xxx(get_IR, TrackingDetection_S, TrackingDetection_E)) {
+      Serial.print("IR in Range ");
+      Serial.println(get_IR);
+      delay_xxx(200);
+    } else if (!function_xxx(get_IR, TrackingDetection_S, TrackingDetection_E)) {
+      Serial.print("IR NOT in Range ");
+      Serial.println(get_IR);
+      delay_xxx(200);
     } else if (function_xxx(get_Distance_OBS_M, 1, 15)) {
       printOnce("Ultra: OBS Mid");
       if (get_Distance_OBS_L < get_Distance_OBS_R) {

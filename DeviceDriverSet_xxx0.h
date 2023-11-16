@@ -25,11 +25,6 @@ public:
 #endif
 
 private:
-//03
-// #define PIN_ITR20001xxxL A0
-// #define PIN_ITR20001xxxM A1
-// #define PIN_ITR20001xxxR A2
-//04
 #define PIN_ITR20001xxxL A2
 #define PIN_ITR20001xxxM A1
 #define PIN_ITR20001xxxR A0
@@ -76,6 +71,8 @@ public:
   void DeviceDriverSet_ULTRASONIC_Init_OBS_L(void);
   void DeviceDriverSet_ULTRASONIC_Init_OBS_M(void);
   void DeviceDriverSet_ULTRASONIC_Init_OBS_R(void);
+
+  void DeviceDriverSet_IR_Init(void);
 #if _Test_DeviceDriverSet
   void DeviceDriverSet_ULTRASONIC_Test_R(void);
   void DeviceDriverSet_ULTRASONIC_Test_L(void);
@@ -89,6 +86,8 @@ public:
   void DeviceDriverSet_ULTRASONIC_Get_OBS_M(uint16_t *ULTRASONIC_Get_OBS_M  /*out*/);
   void DeviceDriverSet_ULTRASONIC_Get_OBS_R(uint16_t *ULTRASONIC_Get_OBS_R  /*out*/);
 
+  void DeviceDriverSet_Get_IR(uint16_t *Get_IR  /*out*/);
+
 private:
 #define TRIG_PIN_R 11     // Arduino pin tied to trigger pin on the ultrasonic sensor.
 #define ECHO_PIN_R 10      // Arduino pin tied to echo pin on the ultrasonic sensor.
@@ -101,6 +100,7 @@ private:
 #define TRIG_PIN_OBS_R 35
 #define ECHO_PIN_OBS_R 33
 #define MAX_DISTANCE 200 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
+#define IN_IR A15
 };
 
 #endif
