@@ -17,21 +17,16 @@ DeviceDriverSet_ULTRASONIC AppULTRASONIC_R;
 DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_L;
 DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_M;
 DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_R;
+DeviceDriverSet_LINE_TRACKER AppLINE_TRACKER;
 DeviceDriverSet_ULTRASONIC AppIR;
-DeviceDriverSet_ITR20001 AppITR20001;
 
-/*f(x) int */
-static boolean
-function_xxx(long x, long s, long e) //f(x)
+static boolean function_xxx(long x, long s, long e)
 {
   if (s <= x && x <= e)
     return true;
   else
     return false;
 }
-
-unsigned long operationStartTime;
-unsigned long tempTime;
 
 enum SmartRobotCarMotionControl
 {
@@ -46,45 +41,34 @@ enum SmartRobotCarMotionControl
   stop_it        //(9)
 };
 
-struct Application_xxx
-{
-  SmartRobotCarMotionControl Motion_Control;
-  unsigned long CMD_CarControl_Millis;
-  unsigned long CMD_LightingControl_Millis;
-};
-Application_xxx Application_SmartRobotCarxxx0;;
-
 void ApplicationFunctionSet_SmartRobotCarMotionControl(SmartRobotCarMotionControl direction, uint8_t is_speed);
 
 void ApplicationFunctionSet::ApplicationFunctionSet_Init(void)
 {
-  bool res_error = true;
   Serial.begin(9600);
   AppMotor.DeviceDriverSet_Motor_Init();
-  AppITR20001.DeviceDriverSet_ITR20001_Init();
   AppULTRASONIC_L.DeviceDriverSet_ULTRASONIC_Init_L();
   AppULTRASONIC_R.DeviceDriverSet_ULTRASONIC_Init_R();
   AppULTRASONIC_OBS_M.DeviceDriverSet_ULTRASONIC_Init_OBS_M();
   AppULTRASONIC_OBS_L.DeviceDriverSet_ULTRASONIC_Init_OBS_L();
   AppULTRASONIC_OBS_R.DeviceDriverSet_ULTRASONIC_Init_OBS_R();
+  AppLINE_TRACKER.DeviceDriverSet_LINE_TRACKER_Init();
   AppIR.DeviceDriverSet_IR_Init();
 
   while (Serial.read() >= 0)
   {
     /*Clear serial port cache...*/
   }
-  delay(2000);
+  delay(1000);
 }
 
 static void ApplicationFunctionSet_SmartRobotCarMotionControl(SmartRobotCarMotionControl direction, uint8_t is_speed)
 {
   ApplicationFunctionSet Application_FunctionSet;
-  uint8_t Kp, UpperLimit;
   uint8_t speed = is_speed;
-
-
-    Kp = 2;
-    UpperLimit = 180;
+  uint8_t Kp, UpperLimit;
+  Kp = 2;
+  UpperLimit = 180;
 
   if (freeze_mode_enabled)
   {
@@ -129,7 +113,7 @@ static void ApplicationFunctionSet_SmartRobotCarMotionControl(SmartRobotCarMotio
                                            /*direction_B*/ direction_void, /*speed_B*/ 0, /*controlED*/ control_enable); //Motor control
     break;
   default:
-      Serial.println("Invalid Direction");
+    Serial.println("Invalid Direction");
     break;
   }
 }
@@ -145,7 +129,6 @@ static void delay_xxx(uint16_t _ms)
 char lastPrintStatement[100]; 
 static void printOnce(const char* tryingToPrint) {
   if (strcmp(tryingToPrint, lastPrintStatement) != 0) {
-    // "The strings are not equal.
     Serial.println(tryingToPrint);
     strcpy(lastPrintStatement, tryingToPrint);
   }
@@ -154,28 +137,27 @@ static void printOnce(const char* tryingToPrint) {
 int randomDirectionForLineTracking = -1;
 long lastTimeLineWasDetected = millis();
 
-void ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
+void ApplicationFunctionSet::ApplicationFunctionSet_Line_Tracking(void)
 { 
-  float getAnaloguexxx_L = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L();
-  float getAnaloguexxx_M = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M();
-  float getAnaloguexxx_R = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R();
+  float get_LT_L = AppLINE_TRACKER.DeviceDriverSet_LINE_TRACKER_get_LT_L();
+  float get_LT_M = AppLINE_TRACKER.DeviceDriverSet_LINE_TRACKER_get_LT_M();
+  float get_LT_R = AppLINE_TRACKER.DeviceDriverSet_LINE_TRACKER_get_LT_R();
   
-  if (function_xxx(getAnaloguexxx_M, TrackingDetection_S, TrackingDetection_E)) {
+  if (function_xxx(get_LT_M, TrackingDetection_S, TrackingDetection_E)) {
     lastTimeLineWasDetected = millis(); // Start the timer
     ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
     printOnce("LT: Mid");
-  } else if (function_xxx(getAnaloguexxx_R, TrackingDetection_S, TrackingDetection_E)) {
+  } else if (function_xxx(get_LT_R, TrackingDetection_S, TrackingDetection_E)) {
     lastTimeLineWasDetected = millis();
     ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
     printOnce("LT: Right");
   }
-  else if (function_xxx(getAnaloguexxx_L, TrackingDetection_S, TrackingDetection_E)) {
+  else if (function_xxx(get_LT_L, TrackingDetection_S, TrackingDetection_E)) {
     lastTimeLineWasDetected = millis();
     ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
     printOnce("LT: Left");
   } else {
-    if (millis() - lastTimeLineWasDetected <= 2000) { // If line last detected for 2 second
-
+    if (millis() - lastTimeLineWasDetected <= 2000) {
       if (randomDirectionForLineTracking == -1) {
         randomDirectionForLineTracking = random(0, 2);
       } else if (randomDirectionForLineTracking == 0) {
@@ -290,7 +272,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);
     printOnce("Ultra: Top Right");
   } else if (millis() - tempDisableLineTracking >= 1000) {
-    ApplicationFunctionSet_Tracking();
+    ApplicationFunctionSet_Line_Tracking();
   } else {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
     printOnce("ELSE: Forward");

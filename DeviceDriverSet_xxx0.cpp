@@ -10,27 +10,6 @@ void DeviceDriverSet_Motor::DeviceDriverSet_Motor_Init(void)
   pinMode(PIN_Motor_STBY, OUTPUT);
 }
 
-/*ITR20001 Detection*/
-bool DeviceDriverSet_ITR20001::DeviceDriverSet_ITR20001_Init(void)
-{
-  pinMode(PIN_ITR20001xxxL, INPUT);
-  pinMode(PIN_ITR20001xxxM, INPUT);
-  pinMode(PIN_ITR20001xxxR, INPUT);
-  return false;
-}
-float DeviceDriverSet_ITR20001::DeviceDriverSet_ITR20001_getAnaloguexxx_L(void)
-{
-  return analogRead(PIN_ITR20001xxxL);
-}
-float DeviceDriverSet_ITR20001::DeviceDriverSet_ITR20001_getAnaloguexxx_M(void)
-{
-  return analogRead(PIN_ITR20001xxxM);
-}
-float DeviceDriverSet_ITR20001::DeviceDriverSet_ITR20001_getAnaloguexxx_R(void)
-{
-  return analogRead(PIN_ITR20001xxxR);
-}
-
 void DeviceDriverSet_Motor::DeviceDriverSet_Motor_control(boolean direction_A, uint8_t speed_A, boolean direction_B, uint8_t speed_B, boolean controlED)
 {
   if (controlED == control_enable)
@@ -86,13 +65,6 @@ void DeviceDriverSet_Motor::DeviceDriverSet_Motor_control(boolean direction_A, u
   }
 }
 
-// IR sensor
-void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_IR_Init(void)
-{
-  pinMode(IN_IR, INPUT);
-}
-
-
 // Ultrasonic
 void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Init_R(void)
 {
@@ -128,11 +100,6 @@ void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Init_OBS_R(void)
   pinMode(TRIG_PIN_OBS_R, OUTPUT);
   pinMode(37, OUTPUT);
   pinMode(31, INPUT);
-}
-
-void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_Get_IR(uint16_t *Get_IR /*out*/)
-{
-  *Get_IR = analogRead(IN_IR);
 }
 
 void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Get_L(uint16_t *ULTRASONIC_Get_L /*out*/)
@@ -197,4 +164,35 @@ void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Get_OBS_R(uint16_t *
   digitalWrite(TRIG_PIN_OBS_R, LOW);
   tempda_x_R = ((unsigned int)pulseIn(ECHO_PIN_OBS_R, HIGH) / 58);
   *ULTRASONIC_Get_OBS_R = tempda_x_R;
+}
+
+bool DeviceDriverSet_LINE_TRACKER::DeviceDriverSet_LINE_TRACKER_Init(void)
+{
+  pinMode(PIN_LT_L, INPUT);
+  pinMode(PIN_LT_M, INPUT);
+  pinMode(PIN_LT_R, INPUT);
+  return false;
+}
+float DeviceDriverSet_LINE_TRACKER::DeviceDriverSet_LINE_TRACKER_get_LT_L(void)
+{
+  return analogRead(PIN_LT_L);
+}
+float DeviceDriverSet_LINE_TRACKER::DeviceDriverSet_LINE_TRACKER_get_LT_M(void)
+{
+  return analogRead(PIN_LT_M);
+}
+float DeviceDriverSet_LINE_TRACKER::DeviceDriverSet_LINE_TRACKER_get_LT_R(void)
+{
+  return analogRead(PIN_LT_R);
+}
+
+// IR sensor
+void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_IR_Init(void)
+{
+  pinMode(IN_IR, INPUT);
+}
+
+void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_Get_IR(uint16_t *Get_IR /*out*/)
+{
+  *Get_IR = analogRead(IN_IR);
 }
