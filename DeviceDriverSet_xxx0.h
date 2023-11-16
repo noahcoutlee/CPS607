@@ -1,17 +1,7 @@
-/*
- * @Author: ELEGOO
- * @Date: 2019-10-22 11:59:09
- * @LastEditTime: 2020-06-12 14:45:27
- * @LastEditors: Changhua
- * @Description: SmartRobot robot tank
- * @FilePath: 
- */
 #ifndef _DeviceDriverSet_xxx0_H_
 #define _DeviceDriverSet_xxx0_H_
 
-#define _Test_DeviceDriverSet 0
 #include <arduino.h>
-
 
 class DeviceDriverSet_ITR20001
 {
@@ -20,9 +10,6 @@ public:
   float DeviceDriverSet_ITR20001_getAnaloguexxx_L(void);
   float DeviceDriverSet_ITR20001_getAnaloguexxx_M(void);
   float DeviceDriverSet_ITR20001_getAnaloguexxx_R(void);
-#if _Test_DeviceDriverSet
-  void DeviceDriverSet_ITR20001_Test(void);
-#endif
 
 private:
 #define PIN_ITR20001xxxL A2
@@ -35,13 +22,7 @@ class DeviceDriverSet_Motor
 {
 public:
   void DeviceDriverSet_Motor_Init(void);
-#if _Test_DeviceDriverSet
-  void DeviceDriverSet_Motor_Test(void);
-#endif
-  void DeviceDriverSet_Motor_control(boolean direction_A, uint8_t speed_A, //A组电机参数
-                                     boolean direction_B, uint8_t speed_B, //B组电机参数
-                                     boolean controlED                     //AB使能允许 true
-  );                                                                       //电机控制
+  void DeviceDriverSet_Motor_control(boolean direction_A, uint8_t speed_A, boolean direction_B, uint8_t speed_B, boolean controlED);
 private:
 #define PIN_Motor_PWMA 5
 #define PIN_Motor_PWMB 6
@@ -60,9 +41,8 @@ public:
 #define control_enable true
 #define control_disable false
 };
-/*ULTRASONIC*/
+// ULTRASONIC
 
-//#include <NewPing.h>
 class DeviceDriverSet_ULTRASONIC
 {
 public:
@@ -71,21 +51,13 @@ public:
   void DeviceDriverSet_ULTRASONIC_Init_OBS_L(void);
   void DeviceDriverSet_ULTRASONIC_Init_OBS_M(void);
   void DeviceDriverSet_ULTRASONIC_Init_OBS_R(void);
-
   void DeviceDriverSet_IR_Init(void);
-#if _Test_DeviceDriverSet
-  void DeviceDriverSet_ULTRASONIC_Test_R(void);
-  void DeviceDriverSet_ULTRASONIC_Test_L(void);
-  void DeviceDriverSet_ULTRASONIC_Init_OBS_L(void);
-  void DeviceDriverSet_ULTRASONIC_Init_OBS_M(void);
-  void DeviceDriverSet_ULTRASONIC_Init_OBS_R(void);
-#endif
+
   void DeviceDriverSet_ULTRASONIC_Get_R(uint16_t *ULTRASONIC_Get_R  /*out*/);
   void DeviceDriverSet_ULTRASONIC_Get_L(uint16_t *ULTRASONIC_Get_L  /*out*/);
   void DeviceDriverSet_ULTRASONIC_Get_OBS_L(uint16_t *ULTRASONIC_Get_OBS_L  /*out*/);
   void DeviceDriverSet_ULTRASONIC_Get_OBS_M(uint16_t *ULTRASONIC_Get_OBS_M  /*out*/);
   void DeviceDriverSet_ULTRASONIC_Get_OBS_R(uint16_t *ULTRASONIC_Get_OBS_R  /*out*/);
-
   void DeviceDriverSet_Get_IR(uint16_t *Get_IR  /*out*/);
 
 private:

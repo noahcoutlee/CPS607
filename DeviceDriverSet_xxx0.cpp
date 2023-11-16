@@ -1,11 +1,3 @@
-/*
- * @Author: ELEGOO
- * @Date: 2019-10-22 11:59:09
- * @LastEditTime: 2020-06-12 16:36:20
- * @LastEditors: Changhua
- * @Description: SmartRobot robot tank
- * @FilePath: 
- */
 #include "DeviceDriverSet_xxx0.h"
 
 /*Motor control*/
@@ -38,62 +30,20 @@ float DeviceDriverSet_ITR20001::DeviceDriverSet_ITR20001_getAnaloguexxx_R(void)
 {
   return analogRead(PIN_ITR20001xxxR);
 }
-#if _Test_DeviceDriverSet
-void DeviceDriverSet_ITR20001::DeviceDriverSet_ITR20001_Test(void)
+
+void DeviceDriverSet_Motor::DeviceDriverSet_Motor_control(boolean direction_A, uint8_t speed_A, boolean direction_B, uint8_t speed_B, boolean controlED)
 {
-  Serial.print("\tL=");
-  Serial.print(analogRead(PIN_ITR20001xxxL));
-
-  Serial.print("\tM=");
-  Serial.print(analogRead(PIN_ITR20001xxxM));
-
-  Serial.print("\tR=");
-  Serial.println(analogRead(PIN_ITR20001xxxR));
-}
-#endif
-
-#if _Test_DeviceDriverSet
-void DeviceDriverSet_Motor::DeviceDriverSet_Motor_Test(void)
-{
-  digitalWrite(PIN_Motor_AIN_1, LOW);
-  analogWrite(PIN_Motor_PWMA, 100);
-  digitalWrite(PIN_Motor_BIN_1, HIGH);
-  analogWrite(PIN_Motor_PWMB, 100);
-
-  delay(3000);
-  digitalWrite(PIN_Motor_AIN_1, HIGH);
-  analogWrite(PIN_Motor_PWMA, 100);
-  digitalWrite(PIN_Motor_BIN_1, LOW);
-  analogWrite(PIN_Motor_PWMB, 100);
-  delay(3000);
-}
-#endif
-
-/*
- Motor_control：AB / 方向、速度
-*/
-/*
- Motor_control：AB / 方向、速度
-*/
-void DeviceDriverSet_Motor::DeviceDriverSet_Motor_control(boolean direction_A, uint8_t speed_A, //A组电机参数
-                                                          boolean direction_B, uint8_t speed_B, //B组电机参数
-                                                          boolean controlED                     //AB使能允许 true
-                                                          )                                     //电机控制
-{
-
-  if (controlED == control_enable) //使能允许？
+  if (controlED == control_enable)
   {
     digitalWrite(PIN_Motor_STBY, HIGH);
-    { //A...Right
-
-      switch (direction_A) //方向控制
+    {
+      switch (direction_A)
       {
       case direction_just:
         digitalWrite(PIN_Motor_AIN_1, HIGH);
         analogWrite(PIN_Motor_PWMA, speed_A);
         break;
       case direction_back:
-
         digitalWrite(PIN_Motor_AIN_1, LOW);
         analogWrite(PIN_Motor_PWMA, speed_A);
         break;
@@ -107,13 +57,11 @@ void DeviceDriverSet_Motor::DeviceDriverSet_Motor_control(boolean direction_A, u
         break;
       }
     }
-
-    { //B...Left
+    {
       switch (direction_B)
       {
       case direction_just:
         digitalWrite(PIN_Motor_BIN_1, HIGH);
-
         analogWrite(PIN_Motor_PWMB, speed_B);
         break;
       case direction_back:
@@ -139,31 +87,28 @@ void DeviceDriverSet_Motor::DeviceDriverSet_Motor_control(boolean direction_A, u
 }
 
 // IR sensor
-
 void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_IR_Init(void)
 {
   pinMode(IN_IR, INPUT);
 }
 
 
-/*ULTRASONIC*/
-//#include <NewPing.h>
-// NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
+// Ultrasonic
 void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Init_R(void)
 {
-  pinMode(ECHO_PIN_R, INPUT); //Ultrasonic module initialization
+  pinMode(ECHO_PIN_R, INPUT);
   pinMode(TRIG_PIN_R, OUTPUT);
 }
 
 void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Init_L(void)
 {
-  pinMode(ECHO_PIN_L, INPUT); //Ultrasonic module initialization
+  pinMode(ECHO_PIN_L, INPUT);
   pinMode(TRIG_PIN_L, OUTPUT);
 }
 
 void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Init_OBS_L(void)
 {
-  pinMode(ECHO_PIN_OBS_L, INPUT); //Ultrasonic module initialization
+  pinMode(ECHO_PIN_OBS_L, INPUT);
   pinMode(TRIG_PIN_OBS_L, OUTPUT);
   pinMode(29, OUTPUT);
   pinMode(23, INPUT);
@@ -171,7 +116,7 @@ void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Init_OBS_L(void)
 
 void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Init_OBS_M(void)
 {
-  pinMode(ECHO_PIN_OBS_M, INPUT); //Ultrasonic module initialization
+  pinMode(ECHO_PIN_OBS_M, INPUT);
   pinMode(TRIG_PIN_OBS_M, OUTPUT);
   pinMode(28, OUTPUT);
   pinMode(22, INPUT);
@@ -179,7 +124,7 @@ void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Init_OBS_M(void)
 
 void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Init_OBS_R(void)
 {
-  pinMode(ECHO_PIN_OBS_R, INPUT); //Ultrasonic module initialization
+  pinMode(ECHO_PIN_OBS_R, INPUT);
   pinMode(TRIG_PIN_OBS_R, OUTPUT);
   pinMode(37, OUTPUT);
   pinMode(31, INPUT);
