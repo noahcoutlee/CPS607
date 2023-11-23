@@ -157,7 +157,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Line_Tracking(void)
     ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
     printOnce("LT: Left");
   } else {
-    if (millis() - lastTimeLineWasDetected <= 2000) {
+    if (millis() - lastTimeLineWasDetected <= 1000) {
       if (randomDirectionForLineTracking == -1) {
         randomDirectionForLineTracking = random(0, 2);
       } else if (randomDirectionForLineTracking == 0) {
@@ -214,6 +214,12 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
       printOnce("Not Plugged In Top L");}
     else if (function_xxx(get_Distance_R, 0, 0)){
       printOnce("Not Plugged In Top R");}
+    else if (function_xxx(get_Distance_OBS_L, 0, 0)){
+      printOnce("Not Plugged In OBS L");}
+    else if (function_xxx(get_Distance_OBS_M, 0, 0)){
+      printOnce("Not Plugged In OBS M");}
+    else if (function_xxx(get_Distance_OBS_R, 0, 0)){
+      printOnce("Not Plugged In OBS R");}
   // } else if (function_xxx(get_IR, TrackingDetection_S, TrackingDetection_E)) {
   //   Serial.print("IR in Range ");
   //   Serial.println(get_IR);
@@ -258,18 +264,18 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 50);
     delay_xxx(500);
     if (randomDirection == 0) {
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 100);
-      // printOnce("Back Right");
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
+      printOnce("Back Right");
     } else {
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);
-      // printOnce("Back Left");
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
+      printOnce("Back Left");
     }
     delay_xxx(randomTime);
   } else if (!function_xxx(get_Distance_L, 1, 10)) {
-    ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 100);
+    ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
     printOnce("Ultra: Top Left");
   } else if (!function_xxx(get_Distance_R, 1, 10)) {
-    ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);
+    ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
     printOnce("Ultra: Top Right");
   } else if (millis() - tempDisableLineTracking >= 1000) {
     ApplicationFunctionSet_Line_Tracking();
