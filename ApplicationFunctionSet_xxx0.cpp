@@ -7,7 +7,7 @@
 #include "DeviceDriverSet_xxx0.h"
 
 // When enabled the robot will output values but the motors will not activate
-#define freeze_mode_enabled true
+#define freeze_mode_enabled false
 
 ApplicationFunctionSet Application_FunctionSet;
 
@@ -216,9 +216,22 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
     Serial.println(get_FLAME_M);
     Serial.print("Flame L: ");
     Serial.println(get_FLAME_L);
-    delay_xxx(500);
 
-  if (function_xxx(get_Distance_L, 0, 0) || function_xxx(get_Distance_R, 0, 0) || function_xxx(get_Distance_OBS_L, 0, 0) || function_xxx(get_Distance_OBS_M, 0, 0) || function_xxx(get_Distance_OBS_R, 0, 0)) {
+  if (get_FLAME_M == 0 || get_FLAME_R == 0 || get_FLAME_L == 0) {
+    ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
+    if (function_xxx(get_FLAME_M, 0, 0)) {
+      printOnce("Not Plugged In FLAME M");}
+    if (function_xxx(get_FLAME_R, 0, 0)) {
+      printOnce("Not Plugged In FLAME R");}
+    if (function_xxx(get_FLAME_L, 0, 0)) {
+      printOnce("Not Plugged In FLAME L");}
+  } else if (get_FLAME_L < 500) {
+    ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
+  } else if (get_FLAME_R < 500) {
+    ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
+  } else if (get_FLAME_M < 500) {
+    ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
+  } else if (function_xxx(get_Distance_L, 0, 0) || function_xxx(get_Distance_R, 0, 0) || function_xxx(get_Distance_OBS_L, 0, 0) || function_xxx(get_Distance_OBS_M, 0, 0) || function_xxx(get_Distance_OBS_R, 0, 0)) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
     if (function_xxx(get_Distance_L, 0, 0)){
       printOnce("Not Plugged In Top L");}
