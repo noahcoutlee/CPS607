@@ -7,7 +7,7 @@
 #include "DeviceDriverSet_xxx0.h"
 
 // When enabled the robot will output values but the motors will not activate
-#define freeze_mode_enabled false
+#define freeze_mode_enabled true
 
 ApplicationFunctionSet Application_FunctionSet;
 
@@ -18,7 +18,7 @@ DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_L;
 DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_M;
 DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_R;
 DeviceDriverSet_LINE_TRACKER AppLINE_TRACKER;
-DeviceDriverSet_ULTRASONIC AppIR;
+DeviceDriverSet_FLAME_IR AppLINE_FLAME_IR;
 
 static boolean function_xxx(long x, long s, long e)
 {
@@ -53,7 +53,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Init(void)
   AppULTRASONIC_OBS_L.DeviceDriverSet_ULTRASONIC_Init_OBS_L();
   AppULTRASONIC_OBS_R.DeviceDriverSet_ULTRASONIC_Init_OBS_R();
   AppLINE_TRACKER.DeviceDriverSet_LINE_TRACKER_Init();
-  AppIR.DeviceDriverSet_IR_Init();
+  AppLINE_FLAME_IR.DeviceDriverSet_FLAME_IR_Init();
 
   while (Serial.read() >= 0)
   {
@@ -185,7 +185,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
   uint16_t get_Distance_OBS_L;
   uint16_t get_Distance_OBS_M;
   uint16_t get_Distance_OBS_R;
-  uint16_t get_IR;
+  uint16_t get_IR_R;
 
   AppULTRASONIC_L.DeviceDriverSet_ULTRASONIC_Get_L(&get_Distance_L /*out*/);
   // Serial.print("ULTRASONIC_L=");
@@ -203,11 +203,21 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
   // Serial.print("ULTRASONIC_OBS_R=");
   // Serial.println(get_Distance_OBS_R);
 
-  AppIR.DeviceDriverSet_Get_IR(&get_IR /*out*/);
+  float get_FLAME_L = AppLINE_FLAME_IR.DeviceDriverSet_get_FLAME_IR_L();
+  float get_FLAME_M = AppLINE_FLAME_IR.DeviceDriverSet_get_FLAME_IR_M();
+  float get_FLAME_R = AppLINE_FLAME_IR.DeviceDriverSet_get_FLAME_IR_R();
 
   int randomTime = random(50, 500);
   int randomDirection = random(0, 2);
   
+    Serial.print("Flame R: ");
+    Serial.println(get_FLAME_R);
+    Serial.print("Flame M: ");
+    Serial.println(get_FLAME_M);
+    Serial.print("Flame L: ");
+    Serial.println(get_FLAME_L);
+    delay_xxx(500);
+
   if (function_xxx(get_Distance_L, 0, 0) || function_xxx(get_Distance_R, 0, 0) || function_xxx(get_Distance_OBS_L, 0, 0) || function_xxx(get_Distance_OBS_M, 0, 0) || function_xxx(get_Distance_OBS_R, 0, 0)) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
     if (function_xxx(get_Distance_L, 0, 0)){
@@ -220,15 +230,12 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
       printOnce("Not Plugged In OBS M");}
     else if (function_xxx(get_Distance_OBS_R, 0, 0)){
       printOnce("Not Plugged In OBS R");}
-  // } else if (function_xxx(get_IR, TrackingDetection_S, TrackingDetection_E)) {
+  // } else if (!function_xxx(get_FLAME_R, TrackingDetection_S, TrackingDetection_E)) {
+  //   //come back later logic
   //   Serial.print("IR in Range ");
-  //   Serial.println(get_IR);
+  //   Serial.println(get_FLAME_R);
   //   delay_xxx(200);
-  // } else if (!function_xxx(get_IR, TrackingDetection_S, TrackingDetection_E)) {
-  //   Serial.print("IR NOT in Range ");
-  //   Serial.println(get_IR);
-  //   delay_xxx(200);
-  } else if (function_xxx(get_Distance_OBS_M, 1, 15)) {
+  }  else if (function_xxx(get_Distance_OBS_M, 1, 15)) {
     printOnce("Ultra: OBS Mid");
     if (get_Distance_OBS_L < get_Distance_OBS_R) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);

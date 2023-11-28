@@ -55,7 +55,8 @@ class DeviceDriverSet_ULTRASONIC
     #define ECHO_PIN_OBS_M 24
     #define TRIG_PIN_OBS_R 35
     #define ECHO_PIN_OBS_R 33
-    #define IN_IR A15
+    
+
     #define MAX_DISTANCE 200 // Maximum distance we want to ping for (in centimeters)
 };
 
@@ -71,6 +72,21 @@ class DeviceDriverSet_LINE_TRACKER
     #define PIN_LT_L A2
     #define PIN_LT_M A1
     #define PIN_LT_R A0
+};
+
+
+class DeviceDriverSet_FLAME_IR
+{
+  public:
+    bool DeviceDriverSet_FLAME_IR_Init(void);
+    float DeviceDriverSet_get_FLAME_IR_L(void);
+    float DeviceDriverSet_get_FLAME_IR_M(void);
+    float DeviceDriverSet_get_FLAME_IR_R(void);
+
+  private:
+    #define FLAME_IR_R A15
+    #define FLAME_IR_M A14
+    #define FLAME_IR_L A13
 };
 
 #endif

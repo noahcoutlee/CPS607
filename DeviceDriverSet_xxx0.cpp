@@ -187,12 +187,33 @@ float DeviceDriverSet_LINE_TRACKER::DeviceDriverSet_LINE_TRACKER_get_LT_R(void)
 }
 
 // IR sensor
-void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_IR_Init(void)
+bool DeviceDriverSet_FLAME_IR::DeviceDriverSet_FLAME_IR_Init(void)
 {
-  pinMode(IN_IR, INPUT);
+  pinMode(FLAME_IR_R, INPUT);
+  pinMode(53, OUTPUT);
+  pinMode(FLAME_IR_M, INPUT);
+  pinMode(52, OUTPUT);
+  pinMode(FLAME_IR_L, INPUT);
+  pinMode(51, OUTPUT);
+  pinMode(50, OUTPUT);
+  digitalWrite(53, HIGH);
+  digitalWrite(52, HIGH);
+  digitalWrite(51, HIGH);
+  digitalWrite(50, LOW);
+  return false;
 }
 
-void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_Get_IR(uint16_t *Get_IR /*out*/)
+float DeviceDriverSet_FLAME_IR::DeviceDriverSet_get_FLAME_IR_R(void)
 {
-  *Get_IR = analogRead(IN_IR);
+  return analogRead(FLAME_IR_R);
+}
+
+float DeviceDriverSet_FLAME_IR::DeviceDriverSet_get_FLAME_IR_L(void)
+{
+  return analogRead(FLAME_IR_L);
+}
+
+float DeviceDriverSet_FLAME_IR::DeviceDriverSet_get_FLAME_IR_M(void)
+{
+  return analogRead(FLAME_IR_M);
 }
