@@ -210,12 +210,12 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
   int randomTime = random(50, 500);
   int randomDirection = random(0, 2);
   
-    Serial.print("Flame R: ");
-    Serial.println(get_FLAME_R);
-    Serial.print("Flame M: ");
-    Serial.println(get_FLAME_M);
-    Serial.print("Flame L: ");
-    Serial.println(get_FLAME_L);
+    // Serial.print("Flame R: ");
+    // Serial.println(get_FLAME_R);
+    // Serial.print("Flame M: ");
+    // Serial.println(get_FLAME_M);
+    // Serial.print("Flame L: ");
+    // Serial.println(get_FLAME_L);
 
   if (get_FLAME_M == 0 || get_FLAME_R == 0 || get_FLAME_L == 0) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
@@ -227,28 +227,22 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
       printOnce("Not Plugged In FLAME L");}
   } else if (get_FLAME_L < 500) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
+    printOnce("IR FLAME L");
   } else if (get_FLAME_R < 500) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
+    printOnce("IR FLAME R");
   } else if (get_FLAME_M < 500) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
-  } else if (function_xxx(get_Distance_L, 0, 0) || function_xxx(get_Distance_R, 0, 0) || function_xxx(get_Distance_OBS_L, 0, 0) || function_xxx(get_Distance_OBS_M, 0, 0) || function_xxx(get_Distance_OBS_R, 0, 0)) {
+    printOnce("IR FLAME M");
+  } else if (function_xxx(get_Distance_OBS_L, 0, 0) || function_xxx(get_Distance_OBS_M, 0, 0) || function_xxx(get_Distance_OBS_R, 0, 0)) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
-    if (function_xxx(get_Distance_L, 0, 0)){
-      printOnce("Not Plugged In Top L");}
-    else if (function_xxx(get_Distance_R, 0, 0)){
-      printOnce("Not Plugged In Top R");}
-    else if (function_xxx(get_Distance_OBS_L, 0, 0)){
+    if (function_xxx(get_Distance_OBS_L, 0, 0)){
       printOnce("Not Plugged In OBS L");}
     else if (function_xxx(get_Distance_OBS_M, 0, 0)){
       printOnce("Not Plugged In OBS M");}
     else if (function_xxx(get_Distance_OBS_R, 0, 0)){
-      printOnce("Not Plugged In OBS R");}
-  // } else if (!function_xxx(get_FLAME_R, TrackingDetection_S, TrackingDetection_E)) {
-  //   //come back later logic
-  //   Serial.print("IR in Range ");
-  //   Serial.println(get_FLAME_R);
-  //   delay_xxx(200);
-  }  else if (function_xxx(get_Distance_OBS_M, 1, 15)) {
+      printOnce("Not Plugged In OBS R");};
+  } else if (function_xxx(get_Distance_OBS_M, 1, 10)) {
     printOnce("Ultra: OBS Mid");
     if (get_Distance_OBS_L < get_Distance_OBS_R) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
@@ -267,36 +261,18 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
     }
     tempDisableLineTracking = millis();
     lastTimeLineWasDetected = lastTimeLineWasDetected - 5000;
-  } else if (function_xxx(get_Distance_OBS_L, 1, 12)) {
+  } else if (function_xxx(get_Distance_OBS_L, 1, 9)) {
     printOnce("Ultra: OBS Left");
     ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
     delay_xxx(25);
     tempDisableLineTracking = millis();
     lastTimeLineWasDetected = lastTimeLineWasDetected - 5000;
-  } else if (function_xxx(get_Distance_OBS_R, 1, 12)) {
+  } else if (function_xxx(get_Distance_OBS_R, 1, 9)) {
     printOnce("Ultra: OBS Right");
     ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
     delay_xxx(25);
     tempDisableLineTracking = millis();
     lastTimeLineWasDetected = lastTimeLineWasDetected - 5000;
-  } else if (!function_xxx(get_Distance_L, 1, 10) && !function_xxx(get_Distance_R, 1, 10)) {
-    printOnce("Ultra: Top Both");
-    ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 50);
-    delay_xxx(500);
-    if (randomDirection == 0) {
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
-      printOnce("Back Right");
-    } else {
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
-      printOnce("Back Left");
-    }
-    delay_xxx(randomTime);
-  } else if (!function_xxx(get_Distance_L, 1, 10)) {
-    ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
-    printOnce("Ultra: Top Left");
-  } else if (!function_xxx(get_Distance_R, 1, 10)) {
-    ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
-    printOnce("Ultra: Top Right");
   } else if (millis() - tempDisableLineTracking >= 1000) {
     ApplicationFunctionSet_Line_Tracking();
   } else {
