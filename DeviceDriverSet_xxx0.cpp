@@ -200,3 +200,15 @@ float DeviceDriverSet_FLAME_IR::DeviceDriverSet_get_FLAME_IR_M(void)
 {
   return analogRead(FLAME_IR_M);
 }
+
+Servo myservo;
+void DeviceDriverSet_Servo::DeviceDriverSet_Servo_Init(unsigned int Position_angle)
+{
+  myservo.attach(PIN_Servo_z);
+  myservo.write(Position_angle);
+}
+
+void DeviceDriverSet_Servo::DeviceDriverSet_Servo_control(unsigned int Position_angle)
+{
+  myservo.write(Position_angle);
+}

@@ -78,4 +78,14 @@ class DeviceDriverSet_FLAME_IR
     #define FLAME_IR_L A13
 };
 
+#include <Servo.h>
+class DeviceDriverSet_Servo
+{
+  public:
+    void DeviceDriverSet_Servo_Init(unsigned int Position_angle);
+    void DeviceDriverSet_Servo_control(unsigned int Position_angle);
+  private:
+    #define PIN_Servo_z 10
+};
+
 #endif

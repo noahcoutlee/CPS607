@@ -7,9 +7,11 @@
 #include "DeviceDriverSet_xxx0.h"
 
 // When enabled the robot will output values but the motors will not activate
-#define freeze_mode_enabled false
-#define forward_speed 100
+#define freeze_mode_enabled true
+#define forward_speed 50
 #define turn_speed 75
+#define init_servo_pos 10
+#define second_servo_pos 50
 
 ApplicationFunctionSet Application_FunctionSet;
 
@@ -20,6 +22,7 @@ DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_R;
 DeviceDriverSet_ULTRASONIC AppULTRASONIC_BACK;
 DeviceDriverSet_LINE_TRACKER AppLINE_TRACKER;
 DeviceDriverSet_FLAME_IR AppLINE_FLAME_IR;
+DeviceDriverSet_Servo AppServo;
 
 static boolean function_xxx(long x, long s, long e)
 {
@@ -54,6 +57,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Init(void)
   AppULTRASONIC_BACK.DeviceDriverSet_ULTRASONIC_Init_BACK();
   AppLINE_TRACKER.DeviceDriverSet_LINE_TRACKER_Init();
   AppLINE_FLAME_IR.DeviceDriverSet_FLAME_IR_Init();
+  AppServo.DeviceDriverSet_Servo_Init(init_servo_pos);
 
   while (Serial.read() >= 0)
   {
@@ -115,14 +119,6 @@ static void ApplicationFunctionSet_SmartRobotCarMotionControl(SmartRobotCarMotio
   default:
     Serial.println("Invalid Direction");
     break;
-  }
-}
-
-static void delay_xxx(uint16_t _ms)
-{
-  for (unsigned long i = 0; i < _ms; i++)
-  {
-    delay(1);
   }
 }
 
@@ -235,21 +231,24 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
   } else if (get_FLAME_M < 500) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
     printOnce("IR FLAME M");
+    AppServo.DeviceDriverSet_Servo_control(second_servo_pos);
+    delay(5000);
+    AppServo.DeviceDriverSet_Servo_control(init_servo_pos);
   } else if (function_xxx(get_Distance_OBS_M, 1, 10)) {
     printOnce("Ultra: OBS Mid");
     if (get_Distance_OBS_L < get_Distance_OBS_R) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(Right, turn_speed);
-      delay_xxx(50);
+      delay(50);
     } else if (get_Distance_OBS_L > get_Distance_OBS_R) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(Left, turn_speed);
-      delay_xxx(50);
+      delay(50);
     } else {
       if (randomDirection == 0) {
         ApplicationFunctionSet_SmartRobotCarMotionControl(Right, turn_speed);
-        delay_xxx(50);
+        delay(50);
       } else {
         ApplicationFunctionSet_SmartRobotCarMotionControl(Left, turn_speed);
-        delay_xxx(50);
+        delay(50);
       }
     }
     tempDisableLineTracking = millis();
@@ -257,13 +256,13 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
   } else if (function_xxx(get_Distance_OBS_L, 1, 12)) {
     printOnce("Ultra: OBS Left");
     ApplicationFunctionSet_SmartRobotCarMotionControl(Right, turn_speed);
-    delay_xxx(25);
+    delay(25);
     tempDisableLineTracking = millis();
     lastTimeLineWasDetected = lastTimeLineWasDetected - 5000;
   } else if (function_xxx(get_Distance_OBS_R, 1, 12)) {
     printOnce("Ultra: OBS Right");
     ApplicationFunctionSet_SmartRobotCarMotionControl(Left, turn_speed);
-    delay_xxx(25);
+    delay(25);
     tempDisableLineTracking = millis();
     lastTimeLineWasDetected = lastTimeLineWasDetected - 5000;
   } else if (millis() - tempDisableLineTracking >= 1000) {
@@ -272,5 +271,9 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, forward_speed);
     printOnce("ELSE: Forward");
   }
+
+  // if (get_FLAME_M >= 500) {
+  //   AppServo.DeviceDriverSet_Servo_control(0);
+  // }
 }
 
