@@ -179,7 +179,6 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
   uint16_t get_Distance_OBS_L;
   uint16_t get_Distance_OBS_M;
   uint16_t get_Distance_OBS_R;
-  uint16_t get_IR_R;
 
   AppULTRASONIC_OBS_L.DeviceDriverSet_ULTRASONIC_Get_OBS_L(&get_Distance_OBS_L /*out*/);
   // Serial.print("ULTRASONIC_OBS_L=");
@@ -195,7 +194,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
   float get_FLAME_M = AppLINE_FLAME_IR.DeviceDriverSet_get_FLAME_IR_M();
   float get_FLAME_R = AppLINE_FLAME_IR.DeviceDriverSet_get_FLAME_IR_R();
 
-  int randomTime = random(50, 500);
+  int randomTime = random(50, 501);
   int randomDirection = random(0, 2);
 
   if (get_FLAME_M == 0 || get_FLAME_R == 0 || get_FLAME_L == 0) {

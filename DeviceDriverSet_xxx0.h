@@ -6,15 +6,11 @@
 class DeviceDriverSet_Motor
 {
   public:
-    #define speed_Max 255
     #define direction_just true
     #define direction_back false
     #define direction_void 3
 
-    #define Duration_enable true
-    #define Duration_disable false
     #define control_enable true
-    #define control_disable false
 
     void DeviceDriverSet_Motor_Init(void);
     void DeviceDriverSet_Motor_control(boolean direction_A, uint8_t speed_A, boolean direction_B, uint8_t speed_B, boolean controlED);
@@ -47,9 +43,6 @@ class DeviceDriverSet_ULTRASONIC
     #define ECHO_PIN_OBS_M 24
     #define TRIG_PIN_OBS_R 35
     #define ECHO_PIN_OBS_R 33
-    
-
-    #define MAX_DISTANCE 200 // Maximum distance we want to ping for (in centimeters)
 };
 
 class DeviceDriverSet_LINE_TRACKER
