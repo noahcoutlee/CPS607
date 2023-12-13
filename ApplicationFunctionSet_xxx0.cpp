@@ -12,8 +12,6 @@
 ApplicationFunctionSet Application_FunctionSet;
 
 DeviceDriverSet_Motor AppMotor;
-DeviceDriverSet_ULTRASONIC AppULTRASONIC_L;
-DeviceDriverSet_ULTRASONIC AppULTRASONIC_R;
 DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_L;
 DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_M;
 DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_R;
@@ -47,8 +45,6 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Init(void)
 {
   Serial.begin(9600);
   AppMotor.DeviceDriverSet_Motor_Init();
-  AppULTRASONIC_L.DeviceDriverSet_ULTRASONIC_Init_L();
-  AppULTRASONIC_R.DeviceDriverSet_ULTRASONIC_Init_R();
   AppULTRASONIC_OBS_M.DeviceDriverSet_ULTRASONIC_Init_OBS_M();
   AppULTRASONIC_OBS_L.DeviceDriverSet_ULTRASONIC_Init_OBS_L();
   AppULTRASONIC_OBS_R.DeviceDriverSet_ULTRASONIC_Init_OBS_R();
@@ -187,12 +183,6 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
   uint16_t get_Distance_OBS_R;
   uint16_t get_IR_R;
 
-  AppULTRASONIC_L.DeviceDriverSet_ULTRASONIC_Get_L(&get_Distance_L /*out*/);
-  // Serial.print("ULTRASONIC_L=");
-  // Serial.println(get_Distance_L);
-  AppULTRASONIC_R.DeviceDriverSet_ULTRASONIC_Get_R(&get_Distance_R /*out*/);
-  // Serial.print("ULTRASONIC_R=");
-  // Serial.println(get_Distance_R);
   AppULTRASONIC_OBS_L.DeviceDriverSet_ULTRASONIC_Get_OBS_L(&get_Distance_OBS_L /*out*/);
   // Serial.print("ULTRASONIC_OBS_L=");
   // Serial.println(get_Distance_OBS_L);
@@ -209,13 +199,6 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
 
   int randomTime = random(50, 500);
   int randomDirection = random(0, 2);
-  
-    // Serial.print("Flame R: ");
-    // Serial.println(get_FLAME_R);
-    // Serial.print("Flame M: ");
-    // Serial.println(get_FLAME_M);
-    // Serial.print("Flame L: ");
-    // Serial.println(get_FLAME_L);
 
   if (get_FLAME_M == 0 || get_FLAME_R == 0 || get_FLAME_L == 0) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
@@ -261,13 +244,13 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
     }
     tempDisableLineTracking = millis();
     lastTimeLineWasDetected = lastTimeLineWasDetected - 5000;
-  } else if (function_xxx(get_Distance_OBS_L, 1, 9)) {
+  } else if (function_xxx(get_Distance_OBS_L, 1, 12)) {
     printOnce("Ultra: OBS Left");
     ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 75);
     delay_xxx(25);
     tempDisableLineTracking = millis();
     lastTimeLineWasDetected = lastTimeLineWasDetected - 5000;
-  } else if (function_xxx(get_Distance_OBS_R, 1, 9)) {
+  } else if (function_xxx(get_Distance_OBS_R, 1, 12)) {
     printOnce("Ultra: OBS Right");
     ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
     delay_xxx(25);

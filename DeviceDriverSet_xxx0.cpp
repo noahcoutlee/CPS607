@@ -65,19 +65,6 @@ void DeviceDriverSet_Motor::DeviceDriverSet_Motor_control(boolean direction_A, u
   }
 }
 
-// Ultrasonic
-void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Init_R(void)
-{
-  pinMode(ECHO_PIN_R, INPUT);
-  pinMode(TRIG_PIN_R, OUTPUT);
-}
-
-void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Init_L(void)
-{
-  pinMode(ECHO_PIN_L, INPUT);
-  pinMode(TRIG_PIN_L, OUTPUT);
-}
-
 void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Init_OBS_L(void)
 {
   pinMode(ECHO_PIN_OBS_L, INPUT);
@@ -100,31 +87,6 @@ void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Init_OBS_R(void)
   pinMode(TRIG_PIN_OBS_R, OUTPUT);
   pinMode(37, OUTPUT);
   pinMode(31, INPUT);
-}
-
-void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Get_L(uint16_t *ULTRASONIC_Get_L /*out*/)
-{
-  unsigned int tempda_x_L = 0;
-  digitalWrite(TRIG_PIN_L, LOW);
-  delayMicroseconds(2);
-  digitalWrite(TRIG_PIN_L, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIG_PIN_L, LOW);
-  tempda_x_L = ((unsigned int)pulseIn(ECHO_PIN_L, HIGH) / 58);
-  *ULTRASONIC_Get_L = tempda_x_L;
-}
-
-
-void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Get_R(uint16_t *ULTRASONIC_Get_R)
-{
-  unsigned int tempda_x_R = 0;
-  digitalWrite(TRIG_PIN_R, LOW);
-  delayMicroseconds(2);
-  digitalWrite(TRIG_PIN_R, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIG_PIN_R, LOW);
-  tempda_x_R = ((unsigned int)pulseIn(ECHO_PIN_R, HIGH) / 58);
-  *ULTRASONIC_Get_R = tempda_x_R;
 }
 
 void DeviceDriverSet_ULTRASONIC::DeviceDriverSet_ULTRASONIC_Get_OBS_L(uint16_t *ULTRASONIC_Get_OBS_L /*out*/)
