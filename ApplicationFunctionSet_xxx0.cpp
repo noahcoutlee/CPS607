@@ -176,8 +176,6 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Line_Tracking(void)
 long tempDisableLineTracking = millis();
 
 void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
-  uint16_t get_Distance_L;
-  uint16_t get_Distance_R;
   uint16_t get_Distance_OBS_L;
   uint16_t get_Distance_OBS_M;
   uint16_t get_Distance_OBS_R;
@@ -208,6 +206,14 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
       printOnce("Not Plugged In FLAME R");}
     if (function_xxx(get_FLAME_L, 0, 0)) {
       printOnce("Not Plugged In FLAME L");}
+  } else if (function_xxx(get_Distance_OBS_L, 0, 0) || function_xxx(get_Distance_OBS_M, 0, 0) || function_xxx(get_Distance_OBS_R, 0, 0)) {
+    ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
+    if (function_xxx(get_Distance_OBS_L, 0, 0)){
+      printOnce("Not Plugged In OBS L");}
+    if (function_xxx(get_Distance_OBS_M, 0, 0)){
+      printOnce("Not Plugged In OBS M");}
+    if (function_xxx(get_Distance_OBS_R, 0, 0)){
+      printOnce("Not Plugged In OBS R");}
   } else if (get_FLAME_L < 500) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 75);
     printOnce("IR FLAME L");
@@ -217,14 +223,6 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
   } else if (get_FLAME_M < 500) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
     printOnce("IR FLAME M");
-  } else if (function_xxx(get_Distance_OBS_L, 0, 0) || function_xxx(get_Distance_OBS_M, 0, 0) || function_xxx(get_Distance_OBS_R, 0, 0)) {
-    ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
-    if (function_xxx(get_Distance_OBS_L, 0, 0)){
-      printOnce("Not Plugged In OBS L");}
-    else if (function_xxx(get_Distance_OBS_M, 0, 0)){
-      printOnce("Not Plugged In OBS M");}
-    else if (function_xxx(get_Distance_OBS_R, 0, 0)){
-      printOnce("Not Plugged In OBS R");};
   } else if (function_xxx(get_Distance_OBS_M, 1, 10)) {
     printOnce("Ultra: OBS Mid");
     if (get_Distance_OBS_L < get_Distance_OBS_R) {
