@@ -28,10 +28,12 @@ class DeviceDriverSet_ULTRASONIC
     void DeviceDriverSet_ULTRASONIC_Init_OBS_L(void);
     void DeviceDriverSet_ULTRASONIC_Init_OBS_M(void);
     void DeviceDriverSet_ULTRASONIC_Init_OBS_R(void);
+    void DeviceDriverSet_ULTRASONIC_Init_BACK(void);
 
     void DeviceDriverSet_ULTRASONIC_Get_OBS_L(uint16_t *ULTRASONIC_Get_OBS_L  /*out*/);
     void DeviceDriverSet_ULTRASONIC_Get_OBS_M(uint16_t *ULTRASONIC_Get_OBS_M  /*out*/);
     void DeviceDriverSet_ULTRASONIC_Get_OBS_R(uint16_t *ULTRASONIC_Get_OBS_R  /*out*/);
+    void DeviceDriverSet_ULTRASONIC_Get_BACK(uint16_t *ULTRASONIC_Get_BACK  /*out*/);
 
     void DeviceDriverSet_IR_Init(void);
     void DeviceDriverSet_Get_IR(uint16_t *Get_IR  /*out*/);
@@ -43,6 +45,8 @@ class DeviceDriverSet_ULTRASONIC
     #define ECHO_PIN_OBS_M 24
     #define TRIG_PIN_OBS_R 35
     #define ECHO_PIN_OBS_R 33
+    #define TRIG_PIN_BACK 34
+    #define ECHO_PIN_BACK 32
 };
 
 class DeviceDriverSet_LINE_TRACKER
