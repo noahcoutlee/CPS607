@@ -7,7 +7,7 @@
 #include "DeviceDriverSet_xxx0.h"
 
 // When enabled the robot will output values but the motors will not activate
-#define freeze_mode_enabled true
+#define freeze_mode_enabled false
 #define forward_speed 50
 #define turn_speed 75
 #define init_servo_pos 10
@@ -165,7 +165,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Line_Tracking(void)
       }
 
     } else {
-      printOnce("LT: Forward");
+      printOnce("ELSE: Forward");
       ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, forward_speed);
       randomDirectionForLineTracking = -1;
       lastTimeLineWasDetected = 0; // Reset the timer when the line is not detected
@@ -173,7 +173,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Line_Tracking(void)
   }
 }
 
-long tempDisableLineTracking = millis();
+bool flame_visible_state = false;
 
 void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
   uint16_t get_Distance_OBS_L;
@@ -232,8 +232,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
     printOnce("IR FLAME M");
     AppServo.DeviceDriverSet_Servo_control(second_servo_pos);
-    delay(5000);
-    AppServo.DeviceDriverSet_Servo_control(init_servo_pos);
+    flame_visible_state = true;
   } else if (function_xxx(get_Distance_OBS_M, 1, 10)) {
     printOnce("Ultra: OBS Mid");
     if (get_Distance_OBS_L < get_Distance_OBS_R) {
@@ -251,29 +250,24 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
         delay(50);
       }
     }
-    tempDisableLineTracking = millis();
     lastTimeLineWasDetected = lastTimeLineWasDetected - 5000;
   } else if (function_xxx(get_Distance_OBS_L, 1, 12)) {
     printOnce("Ultra: OBS Left");
     ApplicationFunctionSet_SmartRobotCarMotionControl(Right, turn_speed);
     delay(25);
-    tempDisableLineTracking = millis();
     lastTimeLineWasDetected = lastTimeLineWasDetected - 5000;
   } else if (function_xxx(get_Distance_OBS_R, 1, 12)) {
     printOnce("Ultra: OBS Right");
     ApplicationFunctionSet_SmartRobotCarMotionControl(Left, turn_speed);
     delay(25);
-    tempDisableLineTracking = millis();
     lastTimeLineWasDetected = lastTimeLineWasDetected - 5000;
-  } else if (millis() - tempDisableLineTracking >= 1000) {
-    ApplicationFunctionSet_Line_Tracking();
   } else {
-    ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, forward_speed);
-    printOnce("ELSE: Forward");
+    ApplicationFunctionSet_Line_Tracking();
   }
 
-  // if (get_FLAME_M >= 500) {
-  //   AppServo.DeviceDriverSet_Servo_control(0);
-  // }
+  if (get_FLAME_M >= 500 && flame_visible_state) {
+    flame_visible_state = false;
+    AppServo.DeviceDriverSet_Servo_control(init_servo_pos);
+  }
 }
 
