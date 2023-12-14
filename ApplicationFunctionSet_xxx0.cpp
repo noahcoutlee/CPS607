@@ -19,7 +19,6 @@ DeviceDriverSet_Motor AppMotor;
 DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_L;
 DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_M;
 DeviceDriverSet_ULTRASONIC AppULTRASONIC_OBS_R;
-DeviceDriverSet_ULTRASONIC AppULTRASONIC_BACK;
 DeviceDriverSet_LINE_TRACKER AppLINE_TRACKER;
 DeviceDriverSet_FLAME_IR AppLINE_FLAME_IR;
 DeviceDriverSet_Servo AppServo;
@@ -54,7 +53,6 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Init(void)
   AppULTRASONIC_OBS_M.DeviceDriverSet_ULTRASONIC_Init_OBS_M();
   AppULTRASONIC_OBS_L.DeviceDriverSet_ULTRASONIC_Init_OBS_L();
   AppULTRASONIC_OBS_R.DeviceDriverSet_ULTRASONIC_Init_OBS_R();
-  AppULTRASONIC_BACK.DeviceDriverSet_ULTRASONIC_Init_BACK();
   AppLINE_TRACKER.DeviceDriverSet_LINE_TRACKER_Init();
   AppLINE_FLAME_IR.DeviceDriverSet_FLAME_IR_Init();
   AppServo.DeviceDriverSet_Servo_Init(init_servo_pos);
@@ -130,22 +128,6 @@ static void printOnce(const char* tryingToPrint) {
   }
 }
 
-// static void fightOrFlight(uint16_t distance) {
-//   if (function_xxx(distance, 1, 10)) {
-//     int randomDirection = random(0, 2);
-//     if (randomDirection == 0) {
-//       ApplicationFunctionSet_SmartRobotCarMotionControl(Right, turn_speed);
-//       // Should turn 90 degrees
-//       delay(500);
-//     } else {
-//       ApplicationFunctionSet_SmartRobotCarMotionControl(Left, turn_speed);
-//       // Should turn 90 degrees
-//       delay(500);
-//     }
-//     printOnce("Ultra: BACK FWD or STOPPED");
-//   }
-// }
-
 int randomDirectionForLineTracking = random(0, 2);
 
 void ApplicationFunctionSet::ApplicationFunctionSet_Line_Tracking(void)
@@ -153,14 +135,10 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Line_Tracking(void)
   float get_LT_L = AppLINE_TRACKER.DeviceDriverSet_LINE_TRACKER_get_LT_L();
   float get_LT_M = AppLINE_TRACKER.DeviceDriverSet_LINE_TRACKER_get_LT_M();
   float get_LT_R = AppLINE_TRACKER.DeviceDriverSet_LINE_TRACKER_get_LT_R();
-
-  uint16_t get_Distance_BACK;
-  AppULTRASONIC_BACK.DeviceDriverSet_ULTRASONIC_Get_BACK(&get_Distance_BACK /*out*/);
   
   if (function_xxx(get_LT_M, TrackingDetection_S, TrackingDetection_E)) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, forward_speed);
     printOnce("LT: Mid");
-    // fightOrFlight(get_Distance_BACK);
   } else if (function_xxx(get_LT_R, TrackingDetection_S, TrackingDetection_E)) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Right, turn_speed);
     printOnce("LT: Right");
@@ -172,7 +150,6 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Line_Tracking(void)
     printOnce("ELSE: Forward");
     ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, forward_speed);
     randomDirectionForLineTracking = random(0, 2);
-    // fightOrFlight(get_Distance_BACK);
   }
 }
 
@@ -182,20 +159,10 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
   uint16_t get_Distance_OBS_L;
   uint16_t get_Distance_OBS_M;
   uint16_t get_Distance_OBS_R;
-  uint16_t get_Distance_BACK;
 
   AppULTRASONIC_OBS_L.DeviceDriverSet_ULTRASONIC_Get_OBS_L(&get_Distance_OBS_L /*out*/);
-  // Serial.print("ULTRASONIC_OBS_L=");
-  // Serial.println(get_Distance_OBS_L);
   AppULTRASONIC_OBS_M.DeviceDriverSet_ULTRASONIC_Get_OBS_M(&get_Distance_OBS_M /*out*/);
-  // Serial.print("ULTRASONIC_OBS_M=");
-  // Serial.println(get_Distance_OBS_M);
   AppULTRASONIC_OBS_R.DeviceDriverSet_ULTRASONIC_Get_OBS_R(&get_Distance_OBS_R /*out*/);
-  // Serial.print("ULTRASONIC_OBS_R=");
-  // Serial.println(get_Distance_OBS_R);
-  AppULTRASONIC_BACK.DeviceDriverSet_ULTRASONIC_Get_BACK(&get_Distance_BACK /*out*/);
-  // Serial.print("ULTRASONIC_BACK=");
-  // Serial.println(get_Distance_BACK);
 
   float get_FLAME_L = AppLINE_FLAME_IR.DeviceDriverSet_get_FLAME_IR_L();
   float get_FLAME_M = AppLINE_FLAME_IR.DeviceDriverSet_get_FLAME_IR_M();
@@ -219,8 +186,6 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
       printOnce("Not Plugged In OBS M");}
     if (function_xxx(get_Distance_OBS_R, 0, 0)){
       printOnce("Not Plugged In OBS R");}
-    // if (function_xxx(get_Distance_BACK, 0, 0)){
-    //   printOnce("Not Plugged In BACK");}
   } else if (get_FLAME_M < 500) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, forward_speed);
     AppServo.DeviceDriverSet_Servo_control(second_servo_pos);
@@ -228,7 +193,6 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
     printOnce("IR FLAME M");
     flame_visible_state = true;
-    // fightOrFlight(get_Distance_BACK);
   } else if (get_FLAME_L < 500) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Left, turn_speed);
     printOnce("IR FLAME L");
