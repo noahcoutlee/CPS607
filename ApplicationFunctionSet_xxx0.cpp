@@ -8,7 +8,7 @@
 
 // When enabled the robot will output values but the motors will not activate
 #define freeze_mode_enabled false
-#define forward_speed 50
+#define forward_speed 80
 #define turn_speed 75
 #define init_servo_pos 50
 #define second_servo_pos 10
