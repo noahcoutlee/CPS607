@@ -228,7 +228,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
     printOnce("IR FLAME M");
     AppServo.DeviceDriverSet_Servo_control(second_servo_pos);
     flame_visible_state = true;
-  } else if (function_xxx(get_Distance_OBS_M, 1, 8)) {
+  } else if (function_xxx(get_Distance_OBS_M, 1, 10)) {
     printOnce("Ultra: OBS Mid");
     if (get_Distance_OBS_L < get_Distance_OBS_R) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(Right, turn_speed);
@@ -245,11 +245,11 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
         delay(50);
       }
     }
-  } else if (function_xxx(get_Distance_OBS_L, 1, 10)) {
+  } else if (function_xxx(get_Distance_OBS_L, 1, 12)) {
     printOnce("Ultra: OBS Left");
     ApplicationFunctionSet_SmartRobotCarMotionControl(Right, turn_speed);
     delay(25);
-  } else if (function_xxx(get_Distance_OBS_R, 1, 10)) {
+  } else if (function_xxx(get_Distance_OBS_R, 1, 12)) {
     printOnce("Ultra: OBS Right");
     ApplicationFunctionSet_SmartRobotCarMotionControl(Left, turn_speed);
     delay(25);
