@@ -130,7 +130,7 @@ static void printOnce(const char* tryingToPrint) {
   }
 }
 
-int randomDirectionForLineTracking = -1;
+int randomDirectionForLineTracking = random(0, 2);
 long lastTimeLineWasDetected = millis();
 
 void ApplicationFunctionSet::ApplicationFunctionSet_Line_Tracking(void)
@@ -152,24 +152,23 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Line_Tracking(void)
     lastTimeLineWasDetected = millis();
     ApplicationFunctionSet_SmartRobotCarMotionControl(Left, turn_speed);
     printOnce("LT: Left");
-  } else {
-    if (millis() - lastTimeLineWasDetected <= 1000) {
-      if (randomDirectionForLineTracking == -1) {
-        randomDirectionForLineTracking = random(0, 2);
-      } else if (randomDirectionForLineTracking == 0) {
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Right, turn_speed);
-        printOnce("Looking for Line: Right");
-      } else {
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Left, turn_speed);
-        printOnce("Looking for Line: Left");
-      }
-
-    } else {
-      printOnce("ELSE: Forward");
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, forward_speed);
-      randomDirectionForLineTracking = -1;
-      lastTimeLineWasDetected = 0; // Reset the timer when the line is not detected
+  } else if (millis() - lastTimeLineWasDetected <= 1000) {
+    if (randomDirectionForLineTracking == -1) {
+      randomDirectionForLineTracking = random(0, 2);
     }
+    
+    if (randomDirectionForLineTracking == 0) {
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Right, turn_speed);
+      printOnce("Looking for Line: Right");
+    } else {
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Left, turn_speed);
+      printOnce("Looking for Line: Left");
+    }
+  } else {
+    printOnce("ELSE: Forward");
+    ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, forward_speed);
+    randomDirectionForLineTracking = -1;
+    lastTimeLineWasDetected = 0; // Reset the timer when the line is not detected
   }
 }
 
