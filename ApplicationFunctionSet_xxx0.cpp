@@ -130,21 +130,21 @@ static void printOnce(const char* tryingToPrint) {
   }
 }
 
-static void fightOrFlight(uint16_t distance) {
-  // if (function_xxx(distance, 1, 15)) {
-  //   int randomDirection = random(0, 2);
-  //   if (randomDirection == 0) {
-  //     ApplicationFunctionSet_SmartRobotCarMotionControl(Right, turn_speed);
-  //     // Should turn 90 degrees
-  //     delay(500);
-  //   } else {
-  //     ApplicationFunctionSet_SmartRobotCarMotionControl(Left, turn_speed);
-  //     // Should turn 90 degrees
-  //     delay(500);
-  //   }
-  //   printOnce("Ultra: BACK FWD or STOPPED");
-  // }
-}
+// static void fightOrFlight(uint16_t distance) {
+//   if (function_xxx(distance, 1, 10)) {
+//     int randomDirection = random(0, 2);
+//     if (randomDirection == 0) {
+//       ApplicationFunctionSet_SmartRobotCarMotionControl(Right, turn_speed);
+//       // Should turn 90 degrees
+//       delay(500);
+//     } else {
+//       ApplicationFunctionSet_SmartRobotCarMotionControl(Left, turn_speed);
+//       // Should turn 90 degrees
+//       delay(500);
+//     }
+//     printOnce("Ultra: BACK FWD or STOPPED");
+//   }
+// }
 
 int randomDirectionForLineTracking = random(0, 2);
 
@@ -160,7 +160,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Line_Tracking(void)
   if (function_xxx(get_LT_M, TrackingDetection_S, TrackingDetection_E)) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, forward_speed);
     printOnce("LT: Mid");
-    fightOrFlight(get_Distance_BACK);
+    // fightOrFlight(get_Distance_BACK);
   } else if (function_xxx(get_LT_R, TrackingDetection_S, TrackingDetection_E)) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Right, turn_speed);
     printOnce("LT: Right");
@@ -172,7 +172,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Line_Tracking(void)
     printOnce("ELSE: Forward");
     ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, forward_speed);
     randomDirectionForLineTracking = random(0, 2);
-    fightOrFlight(get_Distance_BACK);
+    // fightOrFlight(get_Distance_BACK);
   }
 }
 
@@ -211,7 +211,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
       printOnce("Not Plugged In FLAME R");}
     if (function_xxx(get_FLAME_L, 0, 0)) {
       printOnce("Not Plugged In FLAME L");}
-  } else if (function_xxx(get_Distance_OBS_L, 0, 0) || function_xxx(get_Distance_OBS_M, 0, 0) || function_xxx(get_Distance_OBS_R, 0, 0) || function_xxx(get_Distance_BACK, 0, 0)) {
+  } else if (function_xxx(get_Distance_OBS_L, 0, 0) || function_xxx(get_Distance_OBS_M, 0, 0) || function_xxx(get_Distance_OBS_R, 0, 0)) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
     if (function_xxx(get_Distance_OBS_L, 0, 0)){
       printOnce("Not Plugged In OBS L");}
@@ -219,8 +219,8 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
       printOnce("Not Plugged In OBS M");}
     if (function_xxx(get_Distance_OBS_R, 0, 0)){
       printOnce("Not Plugged In OBS R");}
-    if (function_xxx(get_Distance_BACK, 0, 0)){
-      printOnce("Not Plugged In BACK");}
+    // if (function_xxx(get_Distance_BACK, 0, 0)){
+    //   printOnce("Not Plugged In BACK");}
   } else if (get_FLAME_M < 500) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, forward_speed);
     AppServo.DeviceDriverSet_Servo_control(second_servo_pos);
@@ -228,7 +228,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
     printOnce("IR FLAME M");
     flame_visible_state = true;
-    fightOrFlight(get_Distance_BACK);
+    // fightOrFlight(get_Distance_BACK);
   } else if (get_FLAME_L < 500) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Left, turn_speed);
     printOnce("IR FLAME L");
