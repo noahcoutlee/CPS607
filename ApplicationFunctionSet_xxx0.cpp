@@ -8,10 +8,24 @@
 
 // When enabled the robot will output values but the motors will not activate
 #define freeze_mode_enabled false
-#define forward_speed 80
-#define turn_speed 75
 #define init_servo_pos 50
 #define second_servo_pos 10
+
+#define forward_speed 100
+#define backward_speed 100
+#define turn_speed 75
+
+#define IR_LR_delay 300
+#define flame_forward_delay 100
+#define flame_stop_delay 100
+
+#define OBS_LR_delay 100
+#define backup_delay 200
+#define backup_turn_delay 800
+#define mid_dist 10
+#define LR_dist 10
+#define LR_main_extra 0
+#define LR_compare 7
 
 ApplicationFunctionSet Application_FunctionSet;
 
@@ -128,7 +142,8 @@ static void printOnce(const char* tryingToPrint) {
   }
 }
 
-int randomDirectionForLineTracking = random(0, 2);
+long lastTimeLineWasDetected = millis();
+int randomDirection = random(0, 2);
 
 void ApplicationFunctionSet::ApplicationFunctionSet_Line_Tracking(void)
 { 
@@ -139,21 +154,49 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Line_Tracking(void)
   if (function_xxx(get_LT_M, TrackingDetection_S, TrackingDetection_E)) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, forward_speed);
     printOnce("LT: Mid");
+    lastTimeLineWasDetected = millis();
   } else if (function_xxx(get_LT_R, TrackingDetection_S, TrackingDetection_E)) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Right, turn_speed);
     printOnce("LT: Right");
-  }
-  else if (function_xxx(get_LT_L, TrackingDetection_S, TrackingDetection_E)) {
+    lastTimeLineWasDetected = millis();
+  } else if (function_xxx(get_LT_L, TrackingDetection_S, TrackingDetection_E)) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Left, turn_speed);
     printOnce("LT: Left");
+  } else if (millis() - lastTimeLineWasDetected <= 1000) {
+    if (randomDirection == -1) {
+      randomDirection = random(0, 2);
+    }
+
+    if (randomDirection == 0) {
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Right, turn_speed);
+      printOnce("Looking for Line: Right");
+    } else {
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Left, turn_speed);
+      printOnce("Looking for Line: Left");
+    }
   } else {
-    printOnce("ELSE: Forward");
     ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, forward_speed);
-    randomDirectionForLineTracking = random(0, 2);
+    printOnce("ELSE: Forward");
+    randomDirection = -1;
+    lastTimeLineWasDetected = 0;
   }
 }
 
 bool flame_visible_state = false;
+
+static void delay_special(uint16_t ms, float get_FLAME_M, float get_FLAME_L, float get_FLAME_R) {
+  bool isOn = false;
+  for (unsigned long i = 0;i < ms;i++) {
+    if (isOn == false && (get_FLAME_M < 500 || get_FLAME_L < 500 || get_FLAME_R < 500)) {
+      AppServo.DeviceDriverSet_Servo_control(second_servo_pos);
+      isOn = true;
+    }
+    delay(1);
+  }
+  if (isOn) {
+    AppServo.DeviceDriverSet_Servo_control(init_servo_pos);
+  }
+}
 
 void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
   uint16_t get_Distance_OBS_L;
@@ -167,8 +210,6 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
   float get_FLAME_L = AppLINE_FLAME_IR.DeviceDriverSet_get_FLAME_IR_L();
   float get_FLAME_M = AppLINE_FLAME_IR.DeviceDriverSet_get_FLAME_IR_M();
   float get_FLAME_R = AppLINE_FLAME_IR.DeviceDriverSet_get_FLAME_IR_R();
-
-  int randomTime = random(50, 501);
 
   if (get_FLAME_M == 0 || get_FLAME_R == 0 || get_FLAME_L == 0) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
@@ -187,46 +228,52 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Main(void) {
     if (function_xxx(get_Distance_OBS_R, 0, 0)){
       printOnce("Not Plugged In OBS R");}
   } else if (get_FLAME_M < 500) {
-    ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, forward_speed);
     AppServo.DeviceDriverSet_Servo_control(second_servo_pos);
-    delay(200);
+    ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, forward_speed);
+    delay(flame_forward_delay);
     ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
+    delay(flame_stop_delay);
     printOnce("IR FLAME M");
     flame_visible_state = true;
   } else if (get_FLAME_L < 500) {
+    AppServo.DeviceDriverSet_Servo_control(second_servo_pos);
     ApplicationFunctionSet_SmartRobotCarMotionControl(Left, turn_speed);
+    delay(IR_LR_delay);
     printOnce("IR FLAME L");
+    flame_visible_state = true;
   } else if (get_FLAME_R < 500) {
+    AppServo.DeviceDriverSet_Servo_control(second_servo_pos);
     ApplicationFunctionSet_SmartRobotCarMotionControl(Right, turn_speed);
+    delay(IR_LR_delay);
     printOnce("IR FLAME R");
-  } else if (function_xxx(get_Distance_OBS_M, 1, 10)) {
+    flame_visible_state = true;
+  } else if (function_xxx(get_Distance_OBS_M, 1, mid_dist) || (function_xxx(get_Distance_OBS_L, 1, LR_dist) && function_xxx(get_Distance_OBS_R, 1, LR_dist))) {
     printOnce("Ultra: OBS Mid");
-    if (get_Distance_OBS_L < get_Distance_OBS_R && get_Distance_OBS_R - get_Distance_OBS_L > 9) {
+    if (get_Distance_OBS_L < get_Distance_OBS_R && get_Distance_OBS_R - get_Distance_OBS_L > LR_compare) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(Right, turn_speed);
-      delay(50);
-    } else if (get_Distance_OBS_L > get_Distance_OBS_R && get_Distance_OBS_L - get_Distance_OBS_R > 9) {
+      delay_special(OBS_LR_delay, get_FLAME_M, get_FLAME_L, get_FLAME_R);
+    } else if (get_Distance_OBS_L > get_Distance_OBS_R && get_Distance_OBS_L - get_Distance_OBS_R > LR_compare) {
       ApplicationFunctionSet_SmartRobotCarMotionControl(Left, turn_speed);
-      delay(50);
+      delay_special(OBS_LR_delay, get_FLAME_M, get_FLAME_L, get_FLAME_R);
     } else {
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, forward_speed);
-      delay(500);
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, backward_speed);
+      delay_special(backup_delay, get_FLAME_M, get_FLAME_L, get_FLAME_R);
       int randomDirection = random(0, 2);
       if (randomDirection == 0) {
         ApplicationFunctionSet_SmartRobotCarMotionControl(Right, turn_speed);
-        delay(500);
       } else {
         ApplicationFunctionSet_SmartRobotCarMotionControl(Left, turn_speed);
-        delay(500);
       }
+      delay_special(backup_turn_delay, get_FLAME_M, get_FLAME_L, get_FLAME_R);
     }
-  } else if (function_xxx(get_Distance_OBS_L, 1, 12)) {
-    printOnce("Ultra: OBS Left");
+  } else if (function_xxx(get_Distance_OBS_L, 1, LR_dist + LR_main_extra)) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Right, turn_speed);
-    delay(25);
-  } else if (function_xxx(get_Distance_OBS_R, 1, 12)) {
-    printOnce("Ultra: OBS Right");
+    delay_special(OBS_LR_delay, get_FLAME_M, get_FLAME_L, get_FLAME_R);
+    printOnce("Ultra: OBS Left");
+  } else if (function_xxx(get_Distance_OBS_R, 1, LR_dist + LR_main_extra)) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Left, turn_speed);
-    delay(25);
+    delay_special(OBS_LR_delay, get_FLAME_M, get_FLAME_L, get_FLAME_R);
+    printOnce("Ultra: OBS Right");
   } else {
     ApplicationFunctionSet_Line_Tracking();
   }
