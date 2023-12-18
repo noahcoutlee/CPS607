@@ -1,1 +1,2 @@
-# CPS607
+# CPS607 - Arduino named Kenough
+### 
