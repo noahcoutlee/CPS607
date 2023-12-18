@@ -4,4 +4,8 @@
 ### Further, during our previous labs we had implemented edge detection as well.
 ### At last, we scored a 35/30 for this project as we have exceeded the expectations of our professor.
 
+## Our robot
 
+## Performance
+
+## The team
