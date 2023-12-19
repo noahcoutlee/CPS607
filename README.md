@@ -9,7 +9,7 @@
 
 ### At last, we scored a 35/30 for this project as we exceeded the expectations of our professor.
 
-### Tech Stack: C++, Programming Arduino Board, Ultrasonic Sensor, IR sensors, Coding Servo, and Line detectors.
+### 🦾 Tech Stack: C++, Programming Arduino Board, Ultrasonic Sensor, IR sensors, Coding Servo, and Line detectors.
 
 ** **
 # 🦭 Our robot 🦭
