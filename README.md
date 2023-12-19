@@ -25,7 +25,7 @@
 
 ** **
 # ✨ Performance ✨
-### Here is a video of our robot performing in the above scenario: [Google Drive Link]([https://drive.google.com/drive/folders/1lGaGBdBYXP2kzo0Vv3znpSvrDLzda0-u](https://drive.google.com/file/d/1kvTHY89PFMyq42XW5R-wvmm7NbGyok4y/view?usp=sharing))
+### Here is a video of our robot performing in the above scenario: ![Google Drive]([https://drive.google.com/drive/folders/1lGaGBdBYXP2kzo0Vv3znpSvrDLzda0-u](https://drive.google.com/file/d/1kvTHY89PFMyq42XW5R-wvmm7NbGyok4y/view?usp=sharing))
 ** **
 # 🍀 The team behind the scene🍀
 
